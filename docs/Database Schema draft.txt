@@ -1,0 +1,173 @@
+Database Schema — AI Resume Analyzer & Job Match Platform (MongoDB)
+✅ Database: MongoDB (Atlas Free Tier)
+
+We will use 4 main collections:
+
+users
+
+resumes
+
+job_descriptions
+
+analyses
+
+1) ✅ users Collection
+Purpose
+
+Stores registered user details for authentication and ownership of data.
+
+Fields
+{
+  "_id": "ObjectId",
+  "name": "string",
+  "email": "string (unique)",
+  "passwordHash": "string",
+  "role": "string (default: 'user')", 
+  "createdAt": "Date",
+  "updatedAt": "Date"
+}
+
+Indexes
+
+email → unique index
+
+Optional: createdAt
+
+2) ✅ resumes Collection
+Purpose
+
+Stores resume upload metadata + extracted resume text.
+
+Fields
+{
+  "_id": "ObjectId",
+  "userId": "ObjectId (ref: users._id)",
+  "resumeTitle": "string (example: 'SDE Resume V1')",
+  "originalFileName": "string",
+  "fileUrl": "string (optional if stored in cloud/local)",
+  "extractedText": "string",
+  "skillsExtracted": [
+    {
+      "skill": "string",
+      "category": "string (optional)"
+    }
+  ],
+  "createdAt": "Date",
+  "updatedAt": "Date"
+}
+
+Notes
+
+extractedText is important because analysis depends on it.
+
+skillsExtracted is optional but good for faster scoring.
+
+Indexes
+
+userId
+
+createdAt
+
+3) ✅ job_descriptions Collection
+Purpose
+
+Stores JD entered by the user.
+
+Fields
+{
+  "_id": "ObjectId",
+  "userId": "ObjectId (ref: users._id)",
+  "jdTitle": "string (example: 'Backend Developer - Node.js')",
+  "companyName": "string (optional)",
+  "jdText": "string",
+  "skillsExtracted": [
+    {
+      "skill": "string",
+      "category": "string (optional)"
+    }
+  ],
+  "createdAt": "Date",
+  "updatedAt": "Date"
+}
+
+Indexes
+
+userId
+
+createdAt
+
+4) ✅ analyses Collection (Most Important)
+Purpose
+
+Stores analysis results between a resume and a JD.
+
+Fields
+{
+  "_id": "ObjectId",
+  "userId": "ObjectId (ref: users._id)",
+  "resumeId": "ObjectId (ref: resumes._id)",
+  "jobDescriptionId": "ObjectId (ref: job_descriptions._id)",
+
+  "scores": {
+    "atsScore": "number (0 to 100)",
+    "similarityScore": "number (0 to 100)"
+  },
+
+  "keywordMatch": {
+    "matchedSkills": ["string"],
+    "missingSkills": ["string"],
+    "matchedKeywordsCount": "number",
+    "missingKeywordsCount": "number"
+  },
+
+  "strengths": ["string"],
+  "improvements": ["string"],
+
+  "resumeTips": [
+    {
+      "title": "string",
+      "suggestion": "string"
+    }
+  ],
+
+  "createdAt": "Date"
+}
+
+Indexes
+
+userId
+
+createdAt
+
+Optional compound index:
+
+{ userId: 1, resumeId: 1, jobDescriptionId: 1 }
+
+✅ Optional Collections (Only if you want)
+5) skills_master (Optional)
+
+Pre-defined skills list for better extraction and categorization.
+
+{
+  "_id": "ObjectId",
+  "skill": "string (unique)",
+  "category": "string",
+  "aliases": ["string"]
+}
+
+✅ Data Relationships (Summary)
+
+One user can have multiple resumes
+
+One user can have multiple job descriptions
+
+One user can have multiple analyses
+
+Each analysis references one resume + one job description
+
+✅ Why this schema is professional
+
+✅ Separate collections = clean structure
+✅ Analysis history saved properly
+✅ Easy to add admin dashboard later
+✅ Easy to scale features like comparison & charts

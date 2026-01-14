@@ -1,0 +1,275 @@
+Tech Stack + Architecture — AI Resume Analyzer & Job Match Platform
+1) Tech Stack (Final)
+✅ Frontend
+
+React.js
+
+Tailwind CSS (optional, for clean UI fast)
+
+Axios / Fetch for API calls
+
+React Router for navigation
+
+✅ Backend
+
+Python FastAPI
+
+Uvicorn server
+
+Pydantic for request/response validation
+
+JWT Authentication
+
+python-jose / PyJWT
+
+Password hashing
+
+passlib[bcrypt]
+
+✅ Database
+
+MongoDB Atlas (Free Tier)
+
+Motor (async MongoDB driver) or pymongo
+
+Collections:
+
+users
+
+resumes
+
+job_descriptions
+
+analyses
+
+✅ AI / NLP (Free)
+
+sentence-transformers (for semantic similarity scoring)
+
+scikit-learn (optional, for cosine similarity utilities)
+
+Keyword/skill extraction
+
+rule-based extraction
+
+skill dictionary list (optional)
+
+✅ Resume Parsing (PDF)
+
+PyMuPDF (fitz) (recommended fast + reliable)
+OR
+
+pdfplumber
+
+✅ File Storage
+
+Option A (Simple for internship):
+
+Store only extracted text in DB
+
+Do not store the actual PDF file long-term
+
+Option B (Optional):
+
+Store uploaded file temporarily on backend server
+
+✅ Deployment (Free)
+
+Frontend: Vercel (free)
+
+Backend: Render (free)
+
+Database: MongoDB Atlas free
+
+2) Architecture Overview
+✅ High-Level Architecture
+[React Frontend]
+     |
+     |  HTTPS Requests (REST API)
+     v
+[FastAPI Backend]
+     |
+     |  CRUD + Auth + Analysis
+     v
+[MongoDB Database]
+     |
+     |  NLP + PDF Extraction handled inside backend
+     v
+[AI/NLP Services Layer (sentence-transformers)]
+
+3) System Components (Modules)
+3.1 Frontend Modules
+
+Pages
+
+Login / Signup
+
+Dashboard
+
+Resume Upload + JD Input
+
+Results Page
+
+History Page
+
+Analysis Details Page
+
+(Optional) Admin Dashboard
+
+Frontend Responsibilities
+
+UI / Forms
+
+API integration
+
+Showing scores and suggestions
+
+User-friendly error handling
+
+3.2 Backend Modules
+
+1) Auth Module
+
+Register user
+
+Login user
+
+JWT token validation middleware
+
+2) Resume Module
+
+Upload resume PDF
+
+Extract text from PDF
+
+Store extracted text
+
+3) Job Description Module
+
+Save JD text
+
+Store JD info
+
+4) Analysis Module
+
+ATS score logic (keyword matching)
+
+Semantic similarity score (NLP model)
+
+Generate improvements + suggestions
+
+Store analysis results
+
+5) Report Module (Optional)
+
+Generate PDF report for analysis results
+
+4) AI / NLP Design (Free & Practical)
+4.1 Extract Text
+
+Resume PDF → extractedText (string)
+
+JD text → cleanedText (string)
+
+4.2 Preprocessing
+
+lowercase
+
+remove extra spaces
+
+remove special characters (optional)
+
+basic stopwords removal (optional)
+
+4.3 ATS Keyword Match Score
+
+Method:
+
+Extract keywords/skills from JD
+
+Check presence in resume text
+
+Compute score = matched / required * 100
+
+Outputs:
+
+matchedSkills
+
+missingSkills
+
+atsScore
+
+4.4 Similarity Score (AI)
+
+Method:
+
+Use sentence-transformers embeddings
+
+cosine similarity between resume text and JD text
+
+convert similarity into 0–100 range
+
+Outputs:
+
+similarityScore
+
+4.5 Suggestions Engine
+
+Rule-based improvements like:
+
+Add missing skills (if relevant)
+
+Improve bullet point format
+
+Add measurable outcomes (numbers)
+
+Outputs:
+
+strengths
+
+improvements
+
+resumeTips[]
+
+5) Data Flow (Request Lifecycle)
+Step-by-step flow
+
+User logs in → receives JWT token
+
+Upload resume PDF → backend extracts text and stores it
+
+User adds JD → backend stores it
+
+User runs analysis → backend:
+
+pulls resume text + JD text
+
+performs ATS scoring + similarity scoring
+
+creates suggestions
+
+saves analysis result in DB
+
+Results displayed on frontend
+
+User can revisit history anytime
+
+6) Security & Validation (Must follow)
+Backend Validation
+
+✅ PDF file type only
+✅ Max upload size limit
+✅ Sanitize text inputs
+✅ Check user ownership of resume/JD before analysis
+✅ JWT protected routes
+
+Frontend Safety
+
+✅ Avoid showing raw backend errors
+✅ Show readable messages
+
+7) Why this architecture is “professional”
+
+✅ Clean separation: UI / API / DB / AI logic
+✅ Real-world patterns: auth, history, reports
+✅ Easy to scale later: admin, multiple resumes, analytics

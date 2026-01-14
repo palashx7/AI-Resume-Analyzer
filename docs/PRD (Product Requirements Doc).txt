@@ -1,0 +1,288 @@
+PRD — AI Resume Analyzer & Job Match Platform
+1. Overview
+
+Product Name: AI Resume Analyzer & Job Match Platform
+Type: Full-stack web application
+Goal: Help job seekers analyze their resume against a job description (JD), understand skill gaps, and improve their resume content using AI-assisted insights (free/open-source approach).
+
+2. Problem Statement
+
+Many students and early professionals apply for jobs without knowing:
+
+Whether their resume matches the job role
+
+Which skills/keywords are missing
+
+How to improve weak resume bullet points
+
+How ATS (Applicant Tracking Systems) filter resumes
+
+As a result, users face repeated rejections and low shortlisting rates.
+
+3. Target Users
+Primary Users
+
+Final-year engineering students
+
+Freshers applying for internships/jobs
+
+Early professionals switching roles (0–2 years experience)
+
+Secondary Users (Optional)
+
+Mentors/coaches who review resumes
+
+HR/recruiters (limited access)
+
+4. User Goals / Use Cases
+
+Users want to:
+
+Upload a resume PDF and extract resume text correctly
+
+Paste a job description and check match score
+
+See missing skills/keywords clearly
+
+Get improvement suggestions for resume content and bullet points
+
+Save analysis history for future tracking
+
+Generate a downloadable report to share/keep
+
+5. Key Features (MVP — Must Have)
+5.1 Authentication & Profile
+
+User Signup/Login
+
+Secure authentication (JWT)
+
+Basic user profile (name, email)
+
+5.2 Resume Upload & Parsing
+
+Upload resume in PDF format
+
+Extract resume text automatically
+
+Display extracted text preview to user (for verification)
+
+Store uploaded resume metadata + extracted text in database
+
+Constraints:
+
+PDF only
+
+Max file size limit (e.g., 2MB)
+
+5.3 Job Description Input
+
+User can paste a Job Description (JD) text
+
+JD saved for reuse (optional but recommended)
+
+Store JD text in database
+
+5.4 Resume vs JD Analysis (Core Feature)
+
+System provides the following outputs:
+
+✅ ATS Match Score (0–100)
+✅ Semantic Similarity Score (0–100) (using free NLP model)
+✅ List of Matched Keywords / Skills
+✅ List of Missing Keywords / Skills
+✅ Strengths Summary (what user is doing well)
+✅ Improvement Suggestions (what to add/improve)
+
+5.5 Resume Improvement Suggestions (AI-assisted but free)
+
+System suggests:
+
+Improvements to weak resume bullet points (template-based suggestions)
+
+Suggestions on missing skill areas (e.g., add a project/skill)
+
+Actionable tips: “Add metrics”, “Use impact words”, “Mention tools”
+
+5.6 Analysis History & Reports
+
+Save each analysis result
+
+“My History” page shows previous analyses
+
+View detailed analysis for each past report
+
+5.7 Export / Download Report
+
+Download analysis report as PDF
+
+Report includes:
+
+Scores
+
+missing skills
+
+suggestions
+
+timestamp
+
+resume + JD title/reference
+
+6. Optional Features (Nice to Have)
+6.1 Admin Dashboard
+
+Admin can:
+
+View users
+
+View analysis count / usage stats
+
+Manage skills database list
+
+6.2 Skill Categorization
+
+Group skills into:
+
+Frontend
+
+Backend
+
+Database
+
+DevOps/Cloud
+
+AI/ML
+
+Tools (Git, Docker, etc.)
+
+6.3 Resume Versioning / Multiple Resumes
+
+Users can upload multiple resumes
+
+Compare which resume performs better for a role
+
+6.4 Suggested Projects to Add
+
+Based on JD and missing skills, suggest projects like:
+
+“Build a REST API project”
+
+“Create React dashboard”
+
+“Deploy a full-stack app”
+
+6.5 Cover Letter Generator (Template-Based)
+
+Generate a clean cover letter using:
+
+role name
+
+company name
+
+user skills
+(No paid AI APIs)
+
+6.6 Analytics Dashboard
+
+Charts like:
+
+improvement over time
+
+skill coverage trend
+
+top missing skills
+
+7. User Flow (MVP)
+Flow A: New User
+
+Signup → Login
+
+Upload Resume PDF
+
+Paste Job Description
+
+Click Analyze
+
+View Results
+
+Download PDF report
+
+Save in History
+
+Flow B: Returning User
+
+Login
+
+Choose previous resume or upload new one
+
+Paste JD or reuse old JD
+
+Analyze again
+
+Compare results + track improvement
+
+8. Functional Requirements
+
+System should handle PDF parsing reliably
+
+Must return analysis within reasonable time (e.g., < 10 seconds)
+
+Must store analysis results for future viewing
+
+Must ensure data is secure and user-specific (no cross-user access)
+
+9. Non-Functional Requirements
+
+Clean UI, responsive design
+
+Secure file upload
+
+Input validation on all APIs
+
+Error messages must be user-friendly
+
+Use only free/open-source AI methods
+
+10. Edge Cases & Validation
+
+Resume PDF has images only → show “Unable to extract text properly”
+
+Resume is empty or too short → warn user
+
+JD is too short → ask for more details
+
+User uploads non-PDF → reject
+
+Large PDF → reject with size message
+
+AI similarity model slow → fallback to ATS-only scoring
+
+11. Success Metrics (for internship evaluation)
+
+At least 1 fully deployed working web application
+
+Resume parsing works correctly for most PDFs
+
+Analysis output is structured and meaningful
+
+Project has:
+
+authentication
+
+history
+
+report export
+
+clean UI
+
+proper README
+
+12. Scope Boundary (What we won’t do now)
+
+Real-time job scraping from job portals
+
+External paid APIs like OpenAI
+
+Real ATS system integration
+
+Multilingual resume support (optional later)

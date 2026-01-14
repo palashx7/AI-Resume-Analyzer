@@ -1,0 +1,282 @@
+Tasks + Timeline (Kanban) — AI Resume Analyzer & Job Match Platform
+✅ Kanban Board Columns
+
+Use these columns:
+
+✅ Backlog → planned features
+✅ To Do → tasks you will start next
+✅ In Progress → currently working
+✅ Testing → verifying & fixing bugs
+✅ Done → completed
+
+✅ BACKLOG (All Tasks)
+A) Project Setup
+
+ Create GitHub repo + README skeleton
+
+ Create folder structure (frontend/, backend/, docs/)
+
+ Add .gitignore for frontend + backend
+
+ Add environment variable template .env.example
+
+B) Backend (FastAPI)
+Auth Module
+
+ Setup FastAPI project structure
+
+ Setup MongoDB connection
+
+ Create User model/schema
+
+ Register API (POST /auth/register)
+
+ Login API (POST /auth/login)
+
+ JWT middleware / dependency
+
+ Profile API (GET /auth/me)
+
+ Password hashing (bcrypt)
+
+Resume Module
+
+ Resume upload API (POST /resumes/upload)
+
+ File validation (PDF only, max size)
+
+ Extract text from PDF (PyMuPDF/pdfplumber)
+
+ Save resume metadata + extractedText in DB
+
+ Get resumes API (GET /resumes)
+
+ Get resume by ID (GET /resumes/{id})
+
+Job Description Module
+
+ Create JD API (POST /job-descriptions)
+
+ Validate JD length
+
+ Get all JDs API (GET /job-descriptions)
+
+ Get JD by ID (GET /job-descriptions/{id})
+
+Analysis Module (Core)
+
+ Implement preprocessing pipeline
+
+ Implement skill/keyword extraction
+
+ Implement ATS score calculation
+
+ Setup sentence-transformers model
+
+ Implement similarity score
+
+ Suggestion generator (rule-based templates)
+
+ Run analysis API (POST /analysis/run)
+
+ Save analysis result in DB
+
+ History API (GET /analysis/history)
+
+ Analysis details API (GET /analysis/{analysisId})
+
+Report Module (Optional)
+
+ Generate PDF report endpoint
+
+ Download report API (GET /analysis/{id}/report-pdf)
+
+C) Frontend (React)
+Setup
+
+ Create React project
+
+ Setup Tailwind (optional)
+
+ Setup routing (React Router)
+
+ Setup API client (Axios)
+
+Auth Screens
+
+ Signup UI
+
+ Login UI
+
+ Store JWT token
+
+ Protect routes (auth guard)
+
+ Logout
+
+Core Pages
+
+ Dashboard UI
+
+ Resume upload page + JD input
+
+ Loading state & error handling
+
+ Results page (scores + missing skills + suggestions)
+
+ History page (list of analyses)
+
+ Analysis detail page
+
+UI Polish
+
+ Responsive layout
+
+ Basic validation messages
+
+ Progress indicators (spinners)
+
+D) Testing + Quality
+
+ Test PDF upload with different resumes
+
+ Test invalid files and error messages
+
+ Verify analysis output correctness
+
+ Check security: only logged-in user data visible
+
+ Add logging + clear error responses
+
+E) Deployment
+
+ Setup MongoDB Atlas DB
+
+ Deploy backend on Render
+
+ Deploy frontend on Vercel
+
+ Configure CORS properly
+
+ Add production environment variables
+
+ Final live testing after deployment
+
+F) Documentation + Showcase
+
+ Update README with screenshots & setup steps
+
+ Add API documentation in README
+
+ Record demo video (2–3 min)
+
+ Make final project report PDF
+
+✅ WEEKLY TIMELINE (Professional + Realistic)
+✅ Week 1 — Planning + Setup
+
+Goal: Foundation ready
+
+Setup repo + docs + folder structure
+
+FastAPI skeleton + Mongo connection
+
+React skeleton + routes setup
+
+✅ Output: Working empty frontend + backend running
+
+✅ Week 2 — Authentication + Base UI
+
+Goal: Login system ready
+
+Backend: register/login/me
+
+Frontend: login/signup UI
+
+Save JWT + protected routes
+
+✅ Output: Full login + logout working
+
+✅ Week 3 — Resume Upload + PDF Text Extraction
+
+Goal: Resume flow working
+
+Resume upload endpoint
+
+Extract text and store it
+
+Resume list page
+
+✅ Output: Upload resume PDF → extractedText stored
+
+✅ Week 4 — Job Description Module + Basic Analysis
+
+Goal: Inputs ready
+
+JD create + list endpoints
+
+Basic ATS score logic
+
+Show results in frontend
+
+✅ Output: Resume + JD → ATS score
+
+✅ Week 5 — AI Similarity Score + Suggestions
+
+Goal: AI adds value
+
+sentence-transformers similarity score
+
+Missing skills + matched skills
+
+Suggestion engine improvements
+
+✅ Output: Real AI similarity score (free)
+
+✅ Week 6 — History + Analysis Detail View
+
+Goal: Product feels complete
+
+Save analyses
+
+History page
+
+Analysis detail page
+
+✅ Output: User can track past analyses
+
+✅ Week 7 — Report Export + Polish (Optional)
+
+Goal: Final professional touch
+
+PDF export endpoint
+
+Better UI
+
+More accurate keyword extraction
+
+✅ Output: Downloadable report
+
+✅ Week 8 — Deployment + Demo + Submission
+
+Goal: Live project
+
+Deploy backend & frontend
+
+Fix issues in production
+
+Record demo video
+
+Final README
+
+✅ Output: Live website + GitHub + demo
+
+✅ How to use Kanban daily (simple)
+
+Every day do this:
+
+Move 2–3 tasks from To Do → In Progress
+
+Finish at least 1 task/day into Done
+
+Keep Testing always active for completed items
