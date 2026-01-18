@@ -4,6 +4,8 @@ from app.core.security import hash_password, verify_password
 from app.core.jwt import create_access_token
 from app.db.mongodb import get_database
 from datetime import datetime
+from fastapi import Depends
+from app.core.auth_dependency import get_current_user
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 db = get_database()
@@ -49,4 +51,11 @@ async def login(user: UserLogin):
             "email": db_user["email"],
             "role": db_user["role"],
         },
+    }
+
+@router.get("/me")
+async def get_me(current_user=Depends(get_current_user)):
+    return {
+        "id": current_user["sub"],
+        "role": current_user["role"]
     }

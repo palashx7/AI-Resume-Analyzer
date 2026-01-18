@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import os
 
 from app.routes import auth  # 👈 import routers here
+from app.routes.resume import router as resume_router
 
 load_dotenv()
 
@@ -13,6 +14,8 @@ app = FastAPI(
 
 # ---------- Routes ----------
 app.include_router(auth.router)
+
+app.include_router(resume_router)
 
 # ---------- Health Check ----------
 @app.get("/health")

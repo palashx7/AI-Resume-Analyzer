@@ -1,14 +1,21 @@
 from datetime import datetime, timedelta
 from jose import jwt
-import os
+from app.core.config import (
+    JWT_SECRET,
+    JWT_ALGORITHM,
+    JWT_EXPIRE_MINUTES
+)
 
-SECRET_KEY = os.getenv("JWT_SECRET", "dev-secret")
-ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
-EXPIRE_MINUTES = int(os.getenv("JWT_EXPIRE_MINUTES", 1440))
-
-
-def create_access_token(data: dict):
+def create_access_token(data: dict) -> str:
+    """
+    Creates a signed JWT access token with expiry.
+    """
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=EXPIRE_MINUTES)
+    expire = datetime.utcnow() + timedelta(minutes=JWT_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+    return jwt.encode(
+        to_encode,
+        JWT_SECRET,
+        algorithm=JWT_ALGORITHM
+    )
