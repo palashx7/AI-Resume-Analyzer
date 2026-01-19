@@ -4,6 +4,7 @@ import os
 
 from app.routes import auth  # 👈 import routers here
 from app.routes.resume import router as resume_router
+from app.routes.jd import router as jd_router
 
 load_dotenv()
 
@@ -16,6 +17,8 @@ app = FastAPI(
 app.include_router(auth.router)
 
 app.include_router(resume_router)
+
+app.include_router(jd_router)
 
 # ---------- Health Check ----------
 @app.get("/health")
