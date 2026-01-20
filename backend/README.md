@@ -65,13 +65,13 @@ backend/
 - Lowercasing
 - Whitespace normalization
 - Noise removal
-1. Keywords are extracted from the Job Description
-1. Keywords are matched against resume text
-1. ATS score is calculated using:
+2. Keywords are extracted from the Job Description
+3. Keywords are matched against resume text
+4. ATS score is calculated using:
 ```bash
 ATS Score = (matched keywords / total keywords) × 100
 ```
-1. Rule-based feedback is generated:
+5. Rule-based feedback is generated:
 - Strengths → matched skills
 - Improvements → missing skills
 This mirrors how real Applicant Tracking Systems work at a baseline level.
