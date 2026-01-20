@@ -5,13 +5,27 @@ from fastapi import HTTPException, status
 db = get_database()
 
 
-async def get_analysis_history(user_id: str) -> list[dict]:
+async def get_analysis_history(
+    user_id: str,
+    page: int = 1,
+    limit: int = 10
+) -> dict:
     """
-    Returns analysis history for a user (latest first).
+    Returns paginated analysis history for a user.
     """
-    cursor = db.analyses.find(
-        {"userId": ObjectId(user_id)}
-    ).sort("createdAt", -1)
+    skip = (page - 1) * limit
+
+    query = {"userId": ObjectId(user_id)}
+
+    total = await db.analyses.count_documents(query)
+
+    cursor = (
+        db.analyses
+        .find(query)
+        .sort("createdAt", -1)
+        .skip(skip)
+        .limit(limit)
+    )
 
     analyses = []
     async for doc in cursor:
@@ -20,10 +34,15 @@ async def get_analysis_history(user_id: str) -> list[dict]:
             "resumeId": str(doc["resumeId"]),
             "jobDescriptionId": str(doc["jobDescriptionId"]),
             "atsScore": doc["atsScore"],
-            "createdAt": doc["createdAt"],
+            "createdAt": doc["createdAt"].isoformat(),
         })
 
-    return analyses
+    return {
+        "page": page,
+        "limit": limit,
+        "total": total,
+        "analyses": analyses,
+    }
 
 
 async def get_analysis_by_id(
@@ -53,5 +72,5 @@ async def get_analysis_by_id(
         "missingSkills": doc["missingSkills"],
         "strengths": doc["strengths"],
         "improvements": doc["improvements"],
-        "createdAt": doc["createdAt"],
+        "createdAt": doc["createdAt"].isoformat(),
     }

@@ -8,6 +8,10 @@ from app.services.analysis_service import (
     fetch_resume_and_jd,
     run_ats_keyword_match
 )
+from app.schemas.analysis_history import (
+    AnalysisHistoryResponse,
+    AnalysisDetailResponse
+)
 from app.services.analysis_persistence_service import save_analysis_result
 from app.services.analysis_history_service import get_analysis_history
 from app.services.analysis_history_service import get_analysis_by_id
@@ -65,31 +69,39 @@ async def run_analysis(
             "missingSkills": ats_result["missingSkills"],
             "strengths": ats_result["strengths"],
             "improvements": ats_result["improvements"],
-            "createdAt": "2026-01-01T00:00:00Z"
+            "createdAt": resume["createdAt"].isoformat()
         }
     }
 
 @router.get(
     "/history",
+    response_model=AnalysisHistoryResponse,
     status_code=status.HTTP_200_OK
 )
 async def get_analysis_history_route(
+    page: int = 1,
+    limit: int = 10,
     current_user=Depends(get_current_user)
 ):
-    analyses = await get_analysis_history(
-        user_id=current_user["sub"]
+    page = max(page, 1)
+    limit = min(max(limit, 1), 50)  # cap at 50
+
+    return await get_analysis_history(
+        user_id=current_user["sub"],
+        page=page,
+        limit=limit
     )
 
-    return {
-        "analyses": analyses
-    }
+
 
 
 
 @router.get(
     "/{analysisId}",
+    response_model=AnalysisDetailResponse,
     status_code=status.HTTP_200_OK
 )
+
 async def get_analysis_by_id_route(
     analysisId: str,
     current_user=Depends(get_current_user)
