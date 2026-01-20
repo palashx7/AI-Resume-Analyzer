@@ -138,8 +138,10 @@ http://localhost:8000/docs
 
 ## 👨‍💻 Author
 
-Palash Bhivgade
+**Palash Bhivgade**
+
 Final-year Electronics & Telecommunication Engineering student
+
 Focused on backend engineering, system design, and applied AI
 
 ## 🏁 Why This Project Matters
