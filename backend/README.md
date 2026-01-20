@@ -76,83 +76,77 @@ ATS Score = (matched keywords / total keywords) × 100
 - Improvements → missing skills
 This mirrors how real Applicant Tracking Systems work at a baseline level.
 
-🔌 API Overview
-🔐 Auth
-POST /auth/register
-POST /auth/login
+## 🔌 API Overview
+### 🔐 Auth
+- POST /auth/register
+- POST /auth/login
 
-📄 Resumes
-POST /resumes/upload
+### 📄 Resumes
+- POST /resumes/upload
 
-📝 Job Descriptions
-POST /job-descriptions
+### 📝 Job Descriptions
+- POST /job-descriptions
 
-🧠 Analysis
-POST /analysis/run
-GET  /analysis/history?page=1&limit=10
-GET  /analysis/{analysisId}
+### 🧠 Analysis
+- POST /analysis/run
+- GET  /analysis/history?page=1&limit=10
+- GET  /analysis/{analysisId}
 
-🔑 Authorization Header
+### 🔑 Authorization Header
+```bash
 Authorization: Bearer <JWT_TOKEN>
+```
 
-🧪 Tech Stack
+## 🧪 Tech Stack
+- FastAPI
+- MongoDB Atlas
+- JWT Authentication
+- PyMuPDF (PDF text extraction)
+- Pydantic (schemas & validation)
 
-FastAPI
-
-MongoDB Atlas
-
-JWT Authentication
-
-PyMuPDF (PDF text extraction)
-
-Pydantic (schemas & validation)
-
-🛠️ Local Development Setup
+## 🛠️ Local Development Setup
 1️⃣ Create virtual environment
+```bash
 python -m venv venv
-
+```
 2️⃣ Activate environment
+```bash
 # Windows
 venv\Scripts\activate
 
 # macOS / Linux
 source venv/bin/activate
-
+```
 3️⃣ Install dependencies
+```bash
 pip install -r requirements.txt
-
+```
 4️⃣ Run server
+```bash
 uvicorn app.main:app --reload
-
+```
 5️⃣ Open Swagger UI
+```bash
 http://localhost:8000/docs
+```
 
-🔮 Future Enhancements
+## 🔮 Future Enhancements
+- Semantic similarity using sentence-transformers
+- Hybrid ATS + AI scoring
+- Resume improvement suggestions
+- Frontend dashboard integration
 
-Semantic similarity using sentence-transformers
-
-Hybrid ATS + AI scoring
-
-Resume improvement suggestions
-
-Frontend dashboard integration
-
-👨‍💻 Author
+## 👨‍💻 Author
 
 Palash Bhivgade
 Final-year Electronics & Telecommunication Engineering student
 Focused on backend engineering, system design, and applied AI
 
-🏁 Why This Project Matters
+## 🏁 Why This Project Matters
 
 This project demonstrates:
-
-Real-world backend architecture
-
-Secure multi-user data handling
-
-Deterministic analysis logic
-
-Clean API design
-
-Production-grade MongoDB usage
+- Real-world backend architecture
+- Secure multi-user data handling
+- Deterministic analysis logic
+- Clean API design
+- Production-grade MongoDB usage
