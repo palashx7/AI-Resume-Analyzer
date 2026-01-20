@@ -1,50 +1,171 @@
-# AI Resume Analyzer & Job Match Platform
+# 🧠 AI Resume Analyzer & Job Match Platform (Backend)
 
-A full-stack web application that analyzes a user's resume against a job description
-and provides ATS score, semantic similarity, skill gaps, and improvement suggestions
-using free and open-source AI tools.
+A production-ready backend system that analyzes resumes against job descriptions using **ATS-style keyword matching**, secure authentication, and persistent analysis history.
 
 ---
 
 ## 🚀 Features
-- Resume PDF upload & parsing
-- Job description analysis
-- ATS keyword match score
-- Semantic similarity score (AI)
-- Skill gap analysis
-- Resume improvement suggestions
-- Analysis history & PDF reports
+
+### 🔐 Authentication & Security
+- JWT-based authentication
+- Strict ownership checks (no cross-user data access)
+- Secure MongoDB queries scoped by user
+
+### 📄 Resume Management
+- PDF resume upload
+- Text extraction using **PyMuPDF**
+- Resume persistence in MongoDB
+
+### 📝 Job Description Management
+- Structured job description input
+- Validation for meaningful content
+- MongoDB persistence
+
+### 🧠 ATS Analysis Engine
+- Deterministic ATS keyword matching
+- Matched vs missing skills
+- ATS score calculation (0–100)
+- Human-readable strengths & improvement suggestions
+
+### 📊 Analysis History
+- Persisted analysis results
+- Paginated analysis history
+- Fetch individual analysis by ID
 
 ---
 
-## 🧠 Tech Stack
-**Frontend**
-- React
-- Tailwind CSS
-- Axios
+## 🏗️ Architecture Overview
 
-**Backend**
-- FastAPI
-- MongoDB Atlas
-- JWT Authentication
+### Folder Structure
 
-**AI / NLP**
-- sentence-transformers
-- Rule-based NLP
+```text
+backend/
+ ├── app/
+ │   ├── core/        # Auth, JWT, config
+ │   ├── db/          # MongoDB connection
+ │   ├── models/      # MongoDB document builders
+ │   ├── schemas/     # Request/response schemas
+ │   ├── services/    # Business logic
+ │   └── routes/      # API endpoints
+ ├── requirements.txt
+ └── main.py
 
----
 
-## 🏗️ Architecture
-Frontend → FastAPI Backend → MongoDB  
-AI processing runs locally in backend.
+Design Principles
 
----
+Thin routes, fat services
 
-## 📅 Roadmap
-- Week 1: Project setup & auth design
-- Week 2: Authentication
-- Week 3: Resume upload & parsing
-- Week 4: JD + ATS analysis
-- Week 5: AI similarity + suggestions
-- Week 6: History & reports
-- Week 7–8: Deployment & polish
+Clear separation of concerns
+
+Deterministic, testable logic
+
+Production-style error handling
+
+
+🧠 ATS Analysis Logic (How It Works)
+
+Resume text and job description text are preprocessed
+
+Lowercasing
+
+Whitespace normalization
+
+Noise removal
+
+Keywords are extracted from the Job Description
+
+Keywords are matched against resume text
+
+ATS score is calculated using:
+
+ATS Score = (matched keywords / total keywords) × 100
+
+
+Rule-based feedback is generated:
+
+Strengths → matched skills
+
+Improvements → missing skills
+
+This mirrors how real Applicant Tracking Systems work at a baseline level.
+
+🔌 API Overview
+🔐 Auth
+POST /auth/register
+POST /auth/login
+
+📄 Resumes
+POST /resumes/upload
+
+📝 Job Descriptions
+POST /job-descriptions
+
+🧠 Analysis
+POST /analysis/run
+GET  /analysis/history?page=1&limit=10
+GET  /analysis/{analysisId}
+
+🔑 Authorization Header
+Authorization: Bearer <JWT_TOKEN>
+
+🧪 Tech Stack
+
+FastAPI
+
+MongoDB Atlas
+
+JWT Authentication
+
+PyMuPDF (PDF text extraction)
+
+Pydantic (schemas & validation)
+
+🛠️ Local Development Setup
+1️⃣ Create virtual environment
+python -m venv venv
+
+2️⃣ Activate environment
+# Windows
+venv\Scripts\activate
+
+# macOS / Linux
+source venv/bin/activate
+
+3️⃣ Install dependencies
+pip install -r requirements.txt
+
+4️⃣ Run server
+uvicorn app.main:app --reload
+
+5️⃣ Open Swagger UI
+http://localhost:8000/docs
+
+🔮 Future Enhancements
+
+Semantic similarity using sentence-transformers
+
+Hybrid ATS + AI scoring
+
+Resume improvement suggestions
+
+Frontend dashboard integration
+
+👨‍💻 Author
+
+Palash Bhivgade
+Final-year Electronics & Telecommunication Engineering student
+Focused on backend engineering, system design, and applied AI
+
+🏁 Why This Project Matters
+
+This project demonstrates:
+
+Real-world backend architecture
+
+Secure multi-user data handling
+
+Deterministic analysis logic
+
+Clean API design
+
+Production-grade MongoDB usage
