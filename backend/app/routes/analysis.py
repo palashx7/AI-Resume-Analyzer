@@ -9,6 +9,9 @@ from app.services.analysis_service import (
     run_ats_keyword_match
 )
 from app.services.analysis_persistence_service import save_analysis_result
+from app.services.analysis_history_service import get_analysis_history
+from app.services.analysis_history_service import get_analysis_by_id
+
 
 router = APIRouter(
     prefix="/analysis",
@@ -65,3 +68,38 @@ async def run_analysis(
             "createdAt": "2026-01-01T00:00:00Z"
         }
     }
+
+@router.get(
+    "/history",
+    status_code=status.HTTP_200_OK
+)
+async def get_analysis_history_route(
+    current_user=Depends(get_current_user)
+):
+    analyses = await get_analysis_history(
+        user_id=current_user["sub"]
+    )
+
+    return {
+        "analyses": analyses
+    }
+
+
+
+@router.get(
+    "/{analysisId}",
+    status_code=status.HTTP_200_OK
+)
+async def get_analysis_by_id_route(
+    analysisId: str,
+    current_user=Depends(get_current_user)
+):
+    analysis = await get_analysis_by_id(
+        user_id=current_user["sub"],
+        analysis_id=analysisId
+    )
+
+    return {
+        "analysis": analysis
+    }
+
