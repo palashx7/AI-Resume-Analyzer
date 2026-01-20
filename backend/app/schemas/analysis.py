@@ -10,16 +10,19 @@ class AnalysisRunRequest(BaseModel):
 
 class AnalysisScores(BaseModel):
     atsScore: int
-
+    similarityScore: int
+    finalScore: int
 
 class AnalysisResult(BaseModel):
     analysisId: str
     scores: AnalysisScores
+    fitLabel: str
     matchedSkills: List[str]
     missingSkills: List[str]
     strengths: List[str]
     improvements: List[str]
-    createdAt: datetime
+    createdAt: str
+
 
 
 class AnalysisRunResponse(BaseModel):

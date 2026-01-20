@@ -30,12 +30,15 @@ async def get_analysis_history(
     analyses = []
     async for doc in cursor:
         analyses.append({
-            "analysisId": str(doc["_id"]),
-            "resumeId": str(doc["resumeId"]),
-            "jobDescriptionId": str(doc["jobDescriptionId"]),
-            "atsScore": doc["atsScore"],
-            "createdAt": doc["createdAt"].isoformat(),
-        })
+    "analysisId": str(doc["_id"]),
+    "resumeId": str(doc["resumeId"]),
+    "jobDescriptionId": str(doc["jobDescriptionId"]),
+    "atsScore": doc["atsScore"],
+    "similarityScore": doc.get("similarityScore", 0),
+    "finalScore": doc.get("finalScore", 0),
+    "createdAt": doc["createdAt"].isoformat(),
+})
+
 
     return {
         "page": page,
@@ -64,13 +67,17 @@ async def get_analysis_by_id(
         )
 
     return {
-        "analysisId": str(doc["_id"]),
-        "resumeId": str(doc["resumeId"]),
-        "jobDescriptionId": str(doc["jobDescriptionId"]),
-        "atsScore": doc["atsScore"],
-        "matchedSkills": doc["matchedSkills"],
-        "missingSkills": doc["missingSkills"],
-        "strengths": doc["strengths"],
-        "improvements": doc["improvements"],
-        "createdAt": doc["createdAt"].isoformat(),
-    }
+    "analysisId": str(doc["_id"]),
+    "resumeId": str(doc["resumeId"]),
+    "jobDescriptionId": str(doc["jobDescriptionId"]),
+    "atsScore": doc["atsScore"],
+    "similarityScore": doc.get("similarityScore", 0),
+    "finalScore": doc.get("finalScore", 0),
+    "matchedSkills": doc["matchedSkills"],
+    "missingSkills": doc["missingSkills"],
+    "strengths": doc["strengths"],
+    "improvements": doc["improvements"],
+    "createdAt": doc["createdAt"].isoformat(),
+}
+
+

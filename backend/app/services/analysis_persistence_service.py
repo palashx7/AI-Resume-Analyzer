@@ -11,31 +11,34 @@ async def save_analysis_result(
     resume_id: str,
     job_description_id: str,
     ats_score: int,
+    similarity_score: int,
+    final_score: int,
+    fit_label: str,
     matched_skills: list[str],
     missing_skills: list[str],
     strengths: list[str],
     improvements: list[str],
-) -> ObjectId:
-    """
-    Saves analysis result into MongoDB and returns analysis ID.
-    """
-    try:
-        analysis_doc = create_analysis_document(
-            user_id=user_id,
-            resume_id=resume_id,
-            job_description_id=job_description_id,
-            ats_score=ats_score,
-            matched_skills=matched_skills,
-            missing_skills=missing_skills,
-            strengths=strengths,
-            improvements=improvements,
-        )
+):
+    analysis_doc = create_analysis_document(
+        user_id=user_id,
+        resume_id=resume_id,
+        job_description_id=job_description_id,
+        ats_score=ats_score,
+        similarity_score=similarity_score,
+        final_score=final_score,
+        fit_label=fit_label,
+        matched_skills=matched_skills,
+        missing_skills=missing_skills,
+        strengths=strengths,
+        improvements=improvements,
+    )
 
-        result = await db.analyses.insert_one(analysis_doc)
-        return result.inserted_id
+    result = await db.analyses.insert_one(analysis_doc)
 
-    except Exception:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to save analysis result",
-        )
+    return {
+        "analysis_id": result.inserted_id,
+        "created_at": analysis_doc["createdAt"]
+    }
+
+
+
