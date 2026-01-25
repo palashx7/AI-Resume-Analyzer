@@ -1,11 +1,35 @@
+/* -----------------------------
+   Global Reset
+------------------------------ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* -----------------------------
+   Root & Page Setup
+------------------------------ */
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+/* -----------------------------
+   Base Theme
+------------------------------ */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+    sans-serif;
+
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: #e5e7eb;
+  background-color: #020617;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -13,75 +37,87 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
+/* -----------------------------
+   Body (IMPORTANT)
+------------------------------ */
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+
+  /* ❌ DO NOT center the app */
+  display: block;
+
+  background-color: #020617;
+  color: #e5e7eb;
 }
 
+/* -----------------------------
+   Links
+------------------------------ */
+a {
+  font-weight: 500;
+  color: #38bdf8;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #7dd3fc;
+}
+
+/* -----------------------------
+   Headings
+------------------------------ */
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  font-size: 2rem;
+  line-height: 1.2;
 }
 
+/* -----------------------------
+   Buttons
+------------------------------ */
 button {
   border-radius: 8px;
   border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
+  padding: 0.5rem 1rem;
+
+  font-size: 0.95rem;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+
+  background-color: #1e293b;
+  color: #e5e7eb;
+
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
+
 button:hover {
-  border-color: #646cff;
+  background-color: #334155;
 }
+
 button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  outline: none;
+  border-color: #38bdf8;
 }
 
+/* -----------------------------
+   Light Mode (optional)
+------------------------------ */
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    color: #0f172a;
+    background-color: #f8fafc;
   }
-  a:hover {
-    color: #747bff;
+
+  body {
+    background-color: #f8fafc;
+    color: #0f172a;
   }
+
   button {
-    background-color: #f9f9f9;
+    background-color: #e2e8f0;
+    color: #0f172a;
   }
-}
-
-/* Global reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* Global app theme */
-html,
-body {
-  width: 100%;
-  height: 100%;
-  background-color: #242424; /* dark slate */
-  color: #e5e7eb; /* light text */
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
-    sans-serif;
 }

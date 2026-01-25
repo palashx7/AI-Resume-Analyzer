@@ -1,41 +1,29 @@
-import { useState, useEffect } from "react";
-import { login } from "../../api/auth.api";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
+import { login } from "../../api/auth.api";
 
 function LoginPage() {
+  const { setAuth } = useAuth();
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const { setAuth, isAuthenticated } = useAuth();
-
-  if (isAuthenticated) {
-  return (
-    <div style={{ maxWidth: 400, margin: "4rem auto" }}>
-      <h2>Logged in successfully ✅</h2>
-      <p>Dashboard will be available once routing is added.</p>
-    </div>
-  );
-}
-
-  // 🔁 Redirect if already logged in
-  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setLoading(true);
 
     try {
-      setLoading(true);
+      const data = await login(email, password);
 
-      const data = await login({
-        email,
-        password,
-      });
-
+      // ✅ REAL backend auth
       setAuth(data.user, data.token);
+
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       setError("Invalid email or password");
     } finally {
@@ -44,44 +32,91 @@ function LoginPage() {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: "4rem auto" }}>
-      <h2>Login</h2>
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#020617",
+      }}
+    >
+      {/* Login Card */}
+      <div
+        style={{
+          width: "360px",
+          backgroundColor: "#0f172a",
+          padding: "2rem",
+          borderRadius: "12px",
+          boxShadow: "0 20px 40px rgba(0, 0, 0, 0.5)",
+        }}
+      >
+        <h2 style={{ marginBottom: "1.5rem", textAlign: "center" }}>
+          Login
+        </h2>
 
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{ display: "block", width: "100%", marginTop: 4 }}
-            required
-          />
-        </div>
-
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{ display: "block", width: "100%", marginTop: 4 }}
-            required
-          />
-        </div>
-
-        {error && (
-          <div style={{ color: "red", marginBottom: "1rem" }}>
-            {error}
+        <form
+          onSubmit={handleSubmit}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "1rem",
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+            <label>Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={loading}
+              style={{
+                padding: "0.5rem",
+                borderRadius: "6px",
+                border: "1px solid #334155",
+                backgroundColor: "#020617",
+                color: "#e5e7eb",
+              }}
+            />
           </div>
-        )}
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
-      </form>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+            <label>Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              disabled={loading}
+              style={{
+                padding: "0.5rem",
+                borderRadius: "6px",
+                border: "1px solid #334155",
+                backgroundColor: "#020617",
+                color: "#e5e7eb",
+              }}
+            />
+          </div>
+
+          {error && (
+            <p style={{ color: "#f87171", fontSize: "0.9rem" }}>
+              {error}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              marginTop: "1rem",
+              width: "100%",
+            }}
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
