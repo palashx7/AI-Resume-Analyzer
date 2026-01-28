@@ -30,15 +30,15 @@ async def get_analysis_history(
     analyses = []
     async for doc in cursor:
         analyses.append({
-    "analysisId": str(doc["_id"]),
-    "resumeId": str(doc["resumeId"]),
-    "jobDescriptionId": str(doc["jobDescriptionId"]),
-    "atsScore": doc["atsScore"],
-    "similarityScore": doc.get("similarityScore", 0),
-    "finalScore": doc.get("finalScore", 0),
-    "createdAt": doc["createdAt"].isoformat(),
-})
-
+            "analysisId": str(doc["_id"]),
+            "resumeId": str(doc["resumeId"]),
+            "jobDescriptionId": str(doc["jobDescriptionId"]),
+            "atsScore": doc.get("atsScore", 0),
+            "similarityScore": doc.get("similarityScore", 0),
+            "finalScore": doc.get("finalScore", 0),
+            "fitLabel": doc.get("fitLabel", "Unknown"),  # ✅ THIS WAS MISSING
+            "createdAt": doc["createdAt"].isoformat(),
+        })
 
     return {
         "page": page,
@@ -67,17 +67,16 @@ async def get_analysis_by_id(
         )
 
     return {
-    "analysisId": str(doc["_id"]),
-    "resumeId": str(doc["resumeId"]),
-    "jobDescriptionId": str(doc["jobDescriptionId"]),
-    "atsScore": doc["atsScore"],
-    "similarityScore": doc.get("similarityScore", 0),
-    "finalScore": doc.get("finalScore", 0),
-    "matchedSkills": doc["matchedSkills"],
-    "missingSkills": doc["missingSkills"],
-    "strengths": doc["strengths"],
-    "improvements": doc["improvements"],
-    "createdAt": doc["createdAt"].isoformat(),
-}
-
-
+        "analysisId": str(doc["_id"]),
+        "resumeId": str(doc["resumeId"]),
+        "jobDescriptionId": str(doc["jobDescriptionId"]),
+        "atsScore": doc.get("atsScore", 0),
+        "similarityScore": doc.get("similarityScore", 0),
+        "finalScore": doc.get("finalScore", 0),
+        "fitLabel": doc.get("fitLabel", "Unknown"),  # ✅ ALSO REQUIRED
+        "matchedSkills": doc.get("matchedSkills", []),
+        "missingSkills": doc.get("missingSkills", []),
+        "strengths": doc.get("strengths", []),
+        "improvements": doc.get("improvements", []),
+        "createdAt": doc["createdAt"].isoformat(),
+    }

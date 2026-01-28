@@ -6,6 +6,9 @@ import DashboardOverview from "./pages/dashboard/DashboardOverview";
 import ResumesPage from "./pages/resumes/ResumesPage";
 import JobDescriptionsPage from "./pages/jobDescriptions/JobDescriptionsPage";
 import AnalysisPage from "./pages/analysis/AnalysisPage";
+import AnalysisHistoryPage from "./pages/analysis/AnalysisHistoryPage";
+
+
 
 function App() {
   return (
@@ -24,6 +27,12 @@ function App() {
   <Route path="resumes" element={<ResumesPage />} />
   <Route path="job-descriptions" element={<JobDescriptionsPage />} />
   <Route path="analysis" element={<AnalysisPage />} />
+  <Route
+  path="/dashboard/analysis/history"
+  element={<AnalysisHistoryPage />}
+/>
+
+
 </Route>
 
 

@@ -28,11 +28,21 @@ export interface AnalysisResult {
  * Lighter payload used for analysis history list
  */
 export interface AnalysisHistoryItem {
-  id: string;
+  analysisId: string;
+  atsScore: number;
+  similarityScore: number;
   finalScore: number;
   fitLabel: FitLabel;
   createdAt: string;
 }
+
+export interface AnalysisHistoryResponse {
+  page: number;
+  limit: number;
+  total: number;
+  analyses: AnalysisHistoryItem[];
+}
+
 
 /**
  * ---------- API Calls ----------
@@ -74,13 +84,18 @@ export async function runAnalysis(params: {
 /**
  * Fetch analysis history for the logged-in user
  */
-export async function getAnalysisHistory(): Promise<AnalysisHistoryItem[]> {
-  const response = await apiClient.get<AnalysisHistoryItem[]>(
-    "/analysis/history"
+export async function getAnalysisHistory(
+  page = 1,
+  limit = 10
+): Promise<AnalysisHistoryResponse> {
+  const response = await apiClient.get<AnalysisHistoryResponse>(
+    "/analysis/history",
+    { params: { page, limit } }
   );
 
   return response.data;
 }
+
 
 /**
  * Fetch full analysis detail by analysis ID
