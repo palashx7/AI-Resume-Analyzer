@@ -78,24 +78,7 @@ function ResumesPage() {
     }
   };
 
-  // 🆕 Fetch resumes on page load
-  useEffect(() => {
-    const fetchResumes = async () => {
-      setIsLoadingResumes(true);
-      setResumeFetchError(null);
-
-      try {
-        const data = await getResumes();
-        setResumes(data);
-      } catch {
-        setResumeFetchError("Failed to load resumes.");
-      } finally {
-        setIsLoadingResumes(false);
-      }
-    };
-
-    fetchResumes();
-  }, []);
+  
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
