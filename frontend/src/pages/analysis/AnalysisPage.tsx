@@ -3,6 +3,8 @@ import {
   runAnalysis,
   type AnalysisResult,
 } from "../../api/analysis.api";
+import AnalysisHistoryPage from "./AnalysisHistoryPage";
+
 
 function AnalysisPage() {
   const [resumeId, setResumeId] = useState("");
@@ -12,6 +14,11 @@ function AnalysisPage() {
   const [analysisResult, setAnalysisResult] =
     useState<AnalysisResult | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  type AnalysisTab = "run" | "history";
+
+  const [activeTab, setActiveTab] = useState<AnalysisTab>("run");
+
 
   const isFormValid =
     resumeId.trim().length > 0 &&
@@ -77,7 +84,41 @@ setAnalysisResult(normalized);
       </p>
     </div>
 
-    {/* Analysis form */}
+    {/* Tabs */}
+<div style={{ display: "flex", gap: "1rem" }}>
+  <button
+    onClick={() => setActiveTab("run")}
+    style={{
+      padding: "0.6rem 1.2rem",
+      borderRadius: "999px",
+      fontWeight: 600,
+      background: activeTab === "run" ? "#2563eb" : "#020617",
+      color: activeTab === "run" ? "#ffffff" : "#94a3b8",
+      border: "1px solid #1e293b",
+    }}
+  >
+    Run Analysis
+  </button>
+
+  <button
+    onClick={() => setActiveTab("history")}
+    style={{
+      padding: "0.6rem 1.2rem",
+      borderRadius: "999px",
+      fontWeight: 600,
+      background: activeTab === "history" ? "#2563eb" : "#020617",
+      color: activeTab === "history" ? "#ffffff" : "#94a3b8",
+      border: "1px solid #1e293b",
+    }}
+  >
+    History
+  </button>
+</div>
+
+
+{activeTab === "run" && (
+  <>
+  {/* Analysis form */}
     <div
       style={{
         padding: "1.5rem",
@@ -248,6 +289,15 @@ setAnalysisResult(normalized);
         </div>
       </div>
     )}
+    {/* 🔽 YOUR EXISTING RUN ANALYSIS FORM + RESULT */}
+  </>
+)}
+
+{activeTab === "history" && <AnalysisHistoryPage />}
+
+
+
+    
   </div>
 );
 
