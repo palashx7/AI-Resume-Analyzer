@@ -8,7 +8,10 @@ import JobDescriptionsPage from "./pages/jobDescriptions/JobDescriptionsPage";
 import AnalysisPage from "./pages/analysis/AnalysisPage";
 import AnalysisHistoryPage from "./pages/analysis/AnalysisHistoryPage";
 
-
+const handleSelectAnalysis = (analysisId: string) => {
+  console.log("Selected analysis:", analysisId);
+  // Step 3 will load analysis details here
+};
 
 function App() {
   return (
@@ -16,25 +19,24 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
 
       <Route
-  path="/dashboard"
-  element={
-    <AuthGuard>
-      <DashboardLayout />
-    </AuthGuard>
-  }
->
-  <Route index element={<DashboardOverview />} />
-  <Route path="resumes" element={<ResumesPage />} />
-  <Route path="job-descriptions" element={<JobDescriptionsPage />} />
-  <Route path="analysis" element={<AnalysisPage />} />
-  <Route
-  path="/dashboard/analysis/history"
-  element={<AnalysisHistoryPage />}
-/>
-
-
-</Route>
-
+        path="/dashboard"
+        element={
+          <AuthGuard>
+            <DashboardLayout />
+          </AuthGuard>
+        }
+      >
+        <Route index element={<DashboardOverview />} />
+        <Route path="resumes" element={<ResumesPage />} />
+        <Route path="job-descriptions" element={<JobDescriptionsPage />} />
+        <Route path="analysis" element={<AnalysisPage />} />
+        <Route
+          path="/dashboard/analysis/history"
+          element={
+            <AnalysisHistoryPage onSelectAnalysis={handleSelectAnalysis} />
+          }
+        />
+      </Route>
 
       <Route path="/" element={<Navigate to="/login" replace />} />
     </Routes>

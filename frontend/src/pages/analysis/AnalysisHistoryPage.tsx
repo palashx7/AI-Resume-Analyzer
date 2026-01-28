@@ -5,6 +5,10 @@ import {
   type FitLabel,
 } from "../../api/analysis.api";
 
+interface AnalysisHistoryPageProps {
+  onSelectAnalysis: (analysisId: string) => void;
+}
+
 /**
  * Helper for fit label colors
  */
@@ -21,7 +25,7 @@ function getFitStyles(label: FitLabel) {
   }
 }
 
-function AnalysisHistoryPage() {
+function AnalysisHistoryPage({ onSelectAnalysis }: AnalysisHistoryPageProps) {
   const [history, setHistory] = useState<AnalysisHistoryItem[]>([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
@@ -54,6 +58,8 @@ function AnalysisHistoryPage() {
 
     fetchHistory();
   }, [page]);
+
+  // ⬇️ rest of the component (return JSX) stays the same
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
@@ -88,47 +94,52 @@ function AnalysisHistoryPage() {
         )}
 
         {!loading && !error && history.length > 0 && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+          >
             {history.map((item) => (
-              <div
-                key={item.analysisId}
-                style={{
-                  padding: "1rem",
-                  borderRadius: "10px",
-                  border: "1px solid #1e293b",
-                  backgroundColor: "#020617",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: "1.1rem", fontWeight: 600 }}>
-                    {item.finalScore}%
-                  </div>
+  <div
+    key={item.analysisId}
+onClick={() => onSelectAnalysis(item.analysisId)}
+    style={{
+      padding: "1rem",
+      borderRadius: "10px",
+      border: "1px solid #1e293b",
+      backgroundColor: "#020617",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      cursor: "pointer", // 👈 important UX hint
+    }}
+  >
+    <div>
+      <div style={{ fontSize: "1.1rem", fontWeight: 600 }}>
+        {item.finalScore}%
+      </div>
 
-                  <div style={{ fontSize: "0.8rem", opacity: 0.75 }}>
-                    ATS: {item.atsScore}% · Similarity: {item.similarityScore}%
-                  </div>
+      <div style={{ fontSize: "0.8rem", opacity: 0.75 }}>
+        ATS: {item.atsScore}% · Similarity: {item.similarityScore}%
+      </div>
 
-                  <div style={{ fontSize: "0.75rem", opacity: 0.6 }}>
-                    {new Date(item.createdAt).toLocaleString()}
-                  </div>
-                </div>
+      <div style={{ fontSize: "0.75rem", opacity: 0.6 }}>
+        {new Date(item.createdAt).toLocaleString()}
+      </div>
+    </div>
 
-                <span
-                  style={{
-                    padding: "0.4rem 0.8rem",
-                    borderRadius: "999px",
-                    fontSize: "0.8rem",
-                    fontWeight: 600,
-                    ...getFitStyles(item.fitLabel),
-                  }}
-                >
-                  {item.fitLabel}
-                </span>
-              </div>
-            ))}
+    <span
+      style={{
+        padding: "0.4rem 0.8rem",
+        borderRadius: "999px",
+        fontSize: "0.8rem",
+        fontWeight: 600,
+        ...getFitStyles(item.fitLabel),
+      }}
+    >
+      {item.fitLabel}
+    </span>
+  </div>
+))}
+
           </div>
         )}
 
@@ -141,10 +152,7 @@ function AnalysisHistoryPage() {
               gap: "1rem",
             }}
           >
-            <button
-              disabled={page === 1}
-              onClick={() => setPage((p) => p - 1)}
-            >
+            <button disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
               Previous
             </button>
 

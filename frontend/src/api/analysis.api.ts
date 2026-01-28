@@ -43,7 +43,6 @@ export interface AnalysisHistoryResponse {
   analyses: AnalysisHistoryItem[];
 }
 
-
 /**
  * ---------- API Calls ----------
  */
@@ -74,38 +73,40 @@ export async function runAnalysis(params: {
 }): Promise<AnalysisRunResponse> {
   const response = await apiClient.post<AnalysisRunResponse>(
     "/analysis/run",
-    params
+    params,
   );
 
   return response.data;
 }
-
 
 /**
  * Fetch analysis history for the logged-in user
  */
 export async function getAnalysisHistory(
   page = 1,
-  limit = 10
+  limit = 10,
 ): Promise<AnalysisHistoryResponse> {
   const response = await apiClient.get<AnalysisHistoryResponse>(
-    "/analysis/history",
-    { params: { page, limit } }
+    `/analysis/history?page=${page}&limit=${limit}`,
   );
 
   return response.data;
 }
-
 
 /**
  * Fetch full analysis detail by analysis ID
  */
 export async function getAnalysisById(
-  analysisId: string
-): Promise<AnalysisResult> {
-  const response = await apiClient.get<AnalysisResult>(
-    `/analysis/${analysisId}`
+  analysisId: string,
+): Promise<AnalysisByIdResponse> {
+  const response = await apiClient.get<AnalysisByIdResponse>(
+    `/analysis/${analysisId}`,
   );
 
   return response.data;
 }
+
+export interface AnalysisByIdResponse {
+  analysis: AnalysisResult;
+}
+
