@@ -2,6 +2,10 @@ from bson import ObjectId
 from app.db.mongodb import get_database
 from fastapi import HTTPException, status
 
+# ✅ import categorization logic
+from app.services.analysis_service import categorize_skills
+
+
 db = get_database()
 
 
@@ -36,7 +40,7 @@ async def get_analysis_history(
             "atsScore": doc.get("atsScore", 0),
             "similarityScore": doc.get("similarityScore", 0),
             "finalScore": doc.get("finalScore", 0),
-            "fitLabel": doc.get("fitLabel", "Unknown"),  # ✅ THIS WAS MISSING
+            "fitLabel": doc.get("fitLabel", "Unknown"),
             "createdAt": doc["createdAt"].isoformat(),
         })
 
@@ -48,13 +52,7 @@ async def get_analysis_history(
     }
 
 
-async def get_analysis_by_id(
-    user_id: str,
-    analysis_id: str
-) -> dict:
-    """
-    Returns a single analysis by ID with ownership check.
-    """
+async def get_analysis_by_id(user_id: str, analysis_id: str) -> dict:
     doc = await db.analyses.find_one({
         "_id": ObjectId(analysis_id),
         "userId": ObjectId(user_id)
@@ -66,16 +64,35 @@ async def get_analysis_by_id(
             detail="Analysis not found"
         )
 
+    matched = doc.get("matchedSkills", [])
+    missing = doc.get("missingSkills", [])
+
+    categorized_skills = {
+        "matched": categorize_skills(matched),
+        "missing": categorize_skills(missing),
+    }
+    
+
     return {
         "analysisId": str(doc["_id"]),
         "resumeId": str(doc["resumeId"]),
         "jobDescriptionId": str(doc["jobDescriptionId"]),
+
         "atsScore": doc.get("atsScore", 0),
         "similarityScore": doc.get("similarityScore", 0),
         "finalScore": doc.get("finalScore", 0),
-        "fitLabel": doc.get("fitLabel", "Unknown"),  # ✅ ALSO REQUIRED
-        "matchedSkills": doc.get("matchedSkills", []),
-        "missingSkills": doc.get("missingSkills", []),
+        "fitLabel": doc.get("fitLabel", "Unknown"),
+
+        "matchedSkills": matched,
+        "missingSkills": missing,
+        "categorizedSkills": doc.get("categorizedSkills", {
+    "matched": {"core": [], "important": [], "niceToHave": []},
+    "missing": {"core": [], "important": [], "niceToHave": []},
+}),
+
+        # ✅ ALWAYS PRESENT NOW
+        "categorizedSkills": categorized_skills,
+
         "strengths": doc.get("strengths", []),
         "improvements": doc.get("improvements", []),
         "createdAt": doc["createdAt"].isoformat(),

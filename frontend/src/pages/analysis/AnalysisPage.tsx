@@ -19,46 +19,40 @@ function AnalysisPage() {
 
   const [isLoadingAnalysis] = useState(false);
 
-  
-
-
   const handleHistoryClick = async (analysisId: string) => {
-  try {
-    setIsRunning(true);
-    setErrorMessage(null);
+    try {
+      setIsRunning(true);
+      setErrorMessage(null);
 
-    const response = await getAnalysisById(analysisId);
+      const response = await getAnalysisById(analysisId);
 
-    // ✅ THIS IS THE REAL OBJECT
-    const analysis = response.analysis;
+      // ✅ THIS IS THE REAL OBJECT
+      const analysis = response.analysis;
 
-    const normalized: AnalysisResult = {
-      atsScore: analysis.atsScore,
-      similarityScore: analysis.similarityScore,
-      finalScore: analysis.finalScore,
+      const normalized: AnalysisResult = {
+        atsScore: analysis.atsScore,
+        similarityScore: analysis.similarityScore,
+        finalScore: analysis.finalScore,
 
-      fitLabel: analysis.fitLabel,
-      matchedSkills: analysis.matchedSkills,
-      missingSkills: analysis.missingSkills,
-      strengths: analysis.strengths,
-      improvements: analysis.improvements,
+        fitLabel: analysis.fitLabel,
+        matchedSkills: analysis.matchedSkills,
+        missingSkills: analysis.missingSkills,
+        categorizedSkills: analysis.categorizedSkills,
+        strengths: analysis.strengths,
+        improvements: analysis.improvements,
 
-      createdAt: analysis.createdAt,
-    };
+        createdAt: analysis.createdAt,
+      };
 
-    console.log("NORMALIZED FROM HISTORY:", normalized);
-
-    setAnalysisResult(normalized);
-    setActiveTab("run");
-  } catch (err) {
-    console.error(err);
-    setErrorMessage("Failed to load analysis details.");
-  } finally {
-    setIsRunning(false);
-  }
-};
-
-
+      setAnalysisResult(normalized);
+      setActiveTab("run");
+    } catch (err) {
+      console.error(err);
+      setErrorMessage("Failed to load analysis details.");
+    } finally {
+      setIsRunning(false);
+    }
+  };
 
   const isFormValid =
     resumeId.trim()?.length > 0 && jobDescriptionId.trim()?.length > 0;
@@ -87,12 +81,14 @@ function AnalysisPage() {
         fitLabel: response.analysis.fitLabel,
         matchedSkills: response.analysis.matchedSkills,
         missingSkills: response.analysis.missingSkills,
+        categorizedSkills: response.analysis.categorizedSkills,
         strengths: response.analysis.strengths,
         improvements: response.analysis.improvements,
         createdAt: response.analysis.createdAt,
       };
 
       setAnalysisResult(normalized);
+      console.log("CATEGORIZED SKILLS IN STATE:", normalized.categorizedSkills);
     } catch (err: any) {
       if (err?.response) {
         if (err.response.status === 401) {
@@ -112,7 +108,54 @@ function AnalysisPage() {
     }
   };
 
-  console.log("RENDER analysisResult:", analysisResult);
+  const renderSkillGroup = (title: string, skills: string[]) => {
+    if (!skills || skills.length === 0) return null;
+
+    return (
+      <div style={{ marginTop: "0.5rem" }}>
+        <strong>{title}</strong>
+        <ul>
+          {skills.map((skill) => (
+            <li key={skill}>{skill}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
+
+  const SkillChips = ({ skills }: { skills?: string[] }) => {
+    if (!skills || skills.length === 0) {
+      return <span style={{ opacity: 0.5, fontSize: "0.85rem" }}>None</span>;
+    }
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "0.5rem",
+          marginTop: "0.25rem",
+        }}
+      >
+        {skills.map((skill) => (
+          <span
+            key={skill}
+            style={{
+              padding: "0.35rem 0.65rem",
+              borderRadius: "999px",
+              fontSize: "0.8rem",
+              backgroundColor: "#020617",
+              border: "1px solid #334155",
+              color: "#e5e7eb",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {skill}
+          </span>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
@@ -283,33 +326,77 @@ function AnalysisPage() {
               <div style={{ marginBottom: "1.5rem" }}>
                 <h3>Skills Analysis</h3>
 
-                <p style={{ marginTop: "0.75rem" }}>
-                  <strong>Matched Skills</strong>
-                </p>
-                {analysisResult.matchedSkills.length === 0 ? (
-                  <p style={{ opacity: 0.7 }}>No matched skills found.</p>
-                ) : (
-                  <ul>
-                    {analysisResult.matchedSkills.length > 0 &&
-  analysisResult.matchedSkills.map((skill) => (
-    <li key={skill}>{skill}</li>
-))}
+                {analysisResult.categorizedSkills && (
+                  <div
+                    style={{
+                      marginTop: "1rem",
+                      display: "grid",
+                      gap: "1.5rem",
+                    }}
+                  >
+                    {/* MATCHED */}
+                    <div>
+                      <h4 style={{ color: "#22c55e" }}>✅ Matched Skills</h4>
 
-                  </ul>
+                      <div style={{ marginTop: "0.5rem" }}>
+                        <strong>Core</strong>
+                        <SkillChips
+                          skills={analysisResult.categorizedSkills.matched.core}
+                        />
+                      </div>
+
+                      <div style={{ marginTop: "0.5rem" }}>
+                        <strong>Important</strong>
+                        <SkillChips
+                          skills={
+                            analysisResult.categorizedSkills.matched.important
+                          }
+                        />
+                      </div>
+
+                      <div style={{ marginTop: "0.5rem" }}>
+                        <strong>Nice to Have</strong>
+                        <SkillChips
+                          skills={
+                            analysisResult.categorizedSkills.matched.niceToHave
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    {/* MISSING */}
+                    <div>
+                      <h4 style={{ color: "#f97316" }}>⚠ Missing Skills</h4>
+
+                      <div style={{ marginTop: "0.5rem" }}>
+                        <strong>Core</strong>
+                        <SkillChips
+                          skills={analysisResult.categorizedSkills.missing.core}
+                        />
+                      </div>
+
+                      <div style={{ marginTop: "0.5rem" }}>
+                        <strong>Important</strong>
+                        <SkillChips
+                          skills={
+                            analysisResult.categorizedSkills.missing.important
+                          }
+                        />
+                      </div>
+
+                      <div style={{ marginTop: "0.5rem" }}>
+                        <strong>Nice to Have</strong>
+                        <SkillChips
+                          skills={
+                            analysisResult.categorizedSkills.missing.niceToHave
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
                 )}
 
-                <p style={{ marginTop: "0.75rem" }}>
-                  <strong>Missing Skills</strong>
-                </p>
-                {analysisResult.missingSkills.length === 0 ? (
-                  <p style={{ opacity: 0.7 }}>No missing skills found.</p>
-                ) : (
-                  <ul>
-                    {analysisResult.missingSkills.map((skill: string) => (
-                      <li key={skill}>{skill}</li>
-                    ))}
-                  </ul>
-                )}
+                
               </div>
 
               {/* Insights */}
@@ -353,9 +440,7 @@ function AnalysisPage() {
         <AnalysisHistoryPage onSelectAnalysis={handleHistoryClick} />
       )}
 
-
       {isLoadingAnalysis && <p>Loading analysis…</p>}
-
     </div>
   );
 }

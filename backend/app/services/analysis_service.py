@@ -69,6 +69,81 @@ SKILL_DISPLAY_NAMES = {
 }
 
 
+# =========================
+# SKILL WEIGHTS (ATS IMPORTANCE)
+# =========================
+
+SKILL_WEIGHTS = {
+    # ---- Core backend ----
+    "python": 3,
+    "fastapi": 3,
+    "django": 3,
+    "flask": 3,
+
+    # ---- Databases ----
+    "mongodb": 2,
+    "postgresql": 2,
+    "mysql": 2,
+    "sql": 2,
+    "nosql": 2,
+
+    # ---- Infra / DevOps ----
+    "docker": 2,
+    "kubernetes": 2,
+    "aws": 2,
+    "azure": 2,
+    "gcp": 2,
+
+    # ---- APIs & Auth ----
+    "rest": 1,
+    "graphql": 1,
+    "jwt": 1,
+    "oauth": 1,
+
+    # ---- Messaging / Extras ----
+    "kafka": 1,
+    "rabbitmq": 1,
+    "microservices": 1,
+    "ci/cd": 1,
+}
+
+
+SKILL_PRIORITY = {
+    "python": "core",
+    "fastapi": "core",
+    "docker": "important",
+    "mongodb": "important",
+    "postgresql": "important",
+    "aws": "core",
+    "kafka": "niceToHave",
+    "rabbitmq": "niceToHave",
+    "ci/cd": "important",
+    "jwt": "important",
+    "microservices": "core",
+}
+
+
+def categorize_skills(skills: list[str]) -> dict:
+    categories = {
+        "core": [],
+        "important": [],
+        "niceToHave": []
+    }
+
+    for skill in skills:
+        weight = SKILL_WEIGHTS.get(skill.lower(), 1)
+
+        if weight >= 3:
+            categories["core"].append(skill)
+        elif weight == 2:
+            categories["important"].append(skill)
+        else:
+            categories["niceToHave"].append(skill)
+
+    return categories
+
+
+
 
 # =========================
 # TEXT PREPROCESSING
@@ -83,6 +158,16 @@ def preprocess_text(text: str) -> str:
 
 def format_skill(skill: str) -> str:
     return SKILL_DISPLAY_NAMES.get(skill, skill.upper())
+
+
+def count_skill_occurrences(text: str, skill: str) -> int:
+    """
+    Counts how many times a skill appears in the text.
+    Uses word-boundary matching to avoid partial matches.
+    """
+    pattern = rf"\b{re.escape(skill)}\b"
+    return len(re.findall(pattern, text))
+
 
 
 # =========================
@@ -135,10 +220,28 @@ def calculate_ats_score(
     matched: list[str],
     missing: list[str]
 ) -> int:
-    total = len(matched) + len(missing)
-    if total == 0:
+    """
+    Calculates weighted ATS score.
+    Core skills contribute more than nice-to-have skills.
+    """
+
+    total_weight = 0
+    matched_weight = 0
+
+    for skill in matched:
+        weight = SKILL_WEIGHTS.get(skill.lower(), 1)
+        matched_weight += weight
+        total_weight += weight
+
+    for skill in missing:
+        weight = SKILL_WEIGHTS.get(skill.lower(), 1)
+        total_weight += weight
+
+    if total_weight == 0:
         return 0
-    return round((len(matched) / total) * 100)
+
+    return round((matched_weight / total_weight) * 100)
+
 
 
 # =========================
@@ -146,31 +249,39 @@ def calculate_ats_score(
 # =========================
 
 def generate_strengths_and_improvements(
-    matched: list[str],
+    strong: list[str],
+    partial: list[str],
     missing: list[str]
 ) -> tuple[list[str], list[str]]:
 
     strengths = []
     improvements = []
 
-    if matched:
+    if strong:
         strengths.append(
-            "Your resume shows experience with " +
-            ", ".join(matched[:5]) + "."
+            "Strong experience with " +
+            ", ".join(strong[:3]) + "."
+        )
+
+    if partial:
+        strengths.append(
+            "Familiarity with " +
+            ", ".join(partial[:3]) + "."
         )
 
     if missing:
         improvements.append(
             "Consider adding experience with " +
-            ", ".join(missing[:5]) + " if applicable."
+            ", ".join(missing[:3]) + " if relevant."
         )
 
-    if not matched:
+    if not strong and not partial:
         improvements.append(
-            "Your resume has limited skill overlap with the job description."
+            "Your resume shows limited direct skill alignment with the job description."
         )
 
     return strengths, improvements
+
 
 
 # =========================
@@ -187,35 +298,61 @@ def run_ats_keyword_match(
 
     jd_skills = extract_skills_from_text(jd_clean)
 
-    matched, missing = match_skills(
-        resume_clean,
-        jd_skills
-    )
+    strong_skills = []
+    partial_skills = []
+    missing_skills = []
 
+    for skill in jd_skills:
+        count = count_skill_occurrences(resume_clean, skill)
+
+        if count >= 2:
+            strong_skills.append(skill)
+        elif count == 1:
+            partial_skills.append(skill)
+        else:
+            missing_skills.append(skill)
+
+    # ---------- ATS INPUT ----------
+    matched = strong_skills + partial_skills
+    missing = missing_skills
+
+    # ---------- ATS SCORE ----------
     ats_score = calculate_ats_score(matched, missing)
 
+    # ---------- FEEDBACK ----------
     strengths, improvements = generate_strengths_and_improvements(
-        matched,
-        missing
-    )
+    strong_skills,
+    partial_skills,
+    missing_skills
+)
 
-        # ---- STEP 3 CLEANUP ----
+
+    # ---------- CLEANUP ----------
     matched = sorted(set(matched))
     missing = sorted(set(missing))
 
 
-        # ---- STEP 4: Final formatting for UI ----
+    categorized_matched = categorize_skills(matched)
+    categorized_missing = categorize_skills(missing)
+
+    categorized_skills = {
+    "matched": categorize_skills(matched),
+    "missing": categorize_skills(missing)
+}
+
+    # ---------- UI FORMATTING ----------
     matched = [format_skill(skill) for skill in matched]
     missing = [format_skill(skill) for skill in missing]
 
-
     return {
-        "atsScore": ats_score,
-        "matchedSkills": matched,
-        "missingSkills": missing,
-        "strengths": strengths,
-        "improvements": improvements
+    "atsScore": ats_score,
+    "matchedSkills": matched,
+    "missingSkills": missing,
+    "categorizedSkills": categorized_skills,
+    "strengths": strengths,
+    "improvements": improvements
     }
+
 
 
 # =========================

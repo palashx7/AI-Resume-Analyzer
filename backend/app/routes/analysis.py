@@ -24,6 +24,8 @@ from app.services.scoring_service import (
     compute_final_score,
     get_fit_label
 )
+from app.services.analysis_service import run_ats_keyword_match
+
 
 router = APIRouter(
     prefix="/analysis",
@@ -52,6 +54,7 @@ async def run_analysis(
         resume_text=resume["extractedText"],
         jd_text=job_description["jdText"]
     )
+    print("ATS RESULT KEYS:", ats_result.keys())
 
     # ---------- STEP 6.3: AI similarity ----------
     similarity_score = compute_similarity_score(
@@ -79,9 +82,12 @@ async def run_analysis(
         fit_label=fit_label,
         matched_skills=ats_result["matchedSkills"],
         missing_skills=ats_result["missingSkills"],
+        categorized_skills=ats_result["categorizedSkills"],  # ✅ ADD THIS
         strengths=ats_result["strengths"],
         improvements=ats_result["improvements"],
     )
+
+    
 
     # ---------- Response ----------
     return {
@@ -96,6 +102,7 @@ async def run_analysis(
             "fitLabel": fit_label,
             "matchedSkills": ats_result["matchedSkills"],
             "missingSkills": ats_result["missingSkills"],
+            "categorizedSkills": ats_result["categorizedSkills"],
             "strengths": ats_result["strengths"],
             "improvements": ats_result["improvements"],
             "createdAt": analysis_result["created_at"].isoformat()

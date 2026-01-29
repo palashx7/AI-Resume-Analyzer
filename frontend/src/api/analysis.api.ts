@@ -7,6 +7,20 @@ import apiClient from "./axios";
 export type FitLabel = "High Fit" | "Medium Fit" | "Low Fit";
 
 /**
+ * Skill categorization structure
+ */
+export interface CategorizedSkillGroup {
+  core: string[];
+  important: string[];
+  niceToHave: string[];
+}
+
+export interface CategorizedSkills {
+  matched: CategorizedSkillGroup;
+  missing: CategorizedSkillGroup;
+}
+
+/**
  * This interface EXACTLY matches how analysis data
  * is returned from the backend and stored in MongoDB.
  */
@@ -18,6 +32,9 @@ export interface AnalysisResult {
 
   matchedSkills: string[];
   missingSkills: string[];
+
+  categorizedSkills?: CategorizedSkills; // ✅ ADDED
+
   strengths: string[];
   improvements: string[];
 
@@ -59,8 +76,12 @@ export interface AnalysisRunResponse {
       finalScore: number;
     };
     fitLabel: FitLabel;
+
     matchedSkills: string[];
     missingSkills: string[];
+
+    categorizedSkills?: CategorizedSkills; // ✅ ADDED
+
     strengths: string[];
     improvements: string[];
     createdAt: string;
@@ -109,4 +130,3 @@ export async function getAnalysisById(
 export interface AnalysisByIdResponse {
   analysis: AnalysisResult;
 }
-
