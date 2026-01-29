@@ -40,6 +40,36 @@ STOPWORDS = {
     "using", "use", "used",
 }
 
+SKILL_ALIASES = {
+    "ci": "ci/cd",
+    "cd": "ci/cd",
+    "ci-cd": "ci/cd",
+
+    "postgres": "postgresql",
+    "psql": "postgresql",
+
+    "rabbit": "rabbitmq",
+
+    "mongo": "mongodb",
+
+    "js": "javascript",
+}
+
+SKILL_DISPLAY_NAMES = {
+    "ci/cd": "CI/CD",
+    "postgresql": "PostgreSQL",
+    "rabbitmq": "RabbitMQ",
+    "mongodb": "MongoDB",
+    "fastapi": "FastAPI",
+    "aws": "AWS",
+    "jwt": "JWT",
+    "nosql": "NoSQL",
+    "sql": "SQL",
+    "javascript": "JavaScript",
+}
+
+
+
 # =========================
 # TEXT PREPROCESSING
 # =========================
@@ -51,19 +81,37 @@ def preprocess_text(text: str) -> str:
     return text
 
 
+def format_skill(skill: str) -> str:
+    return SKILL_DISPLAY_NAMES.get(skill, skill.upper())
+
+
 # =========================
 # SKILL EXTRACTION
 # =========================
 
+def normalize_skill(word: str) -> str:
+    """
+    Normalize skill aliases to canonical form.
+    """
+    return SKILL_ALIASES.get(word, word)
+
+
 def extract_skills_from_text(text: str) -> set[str]:
     words = text.split()
-    skills = {
-        word
-        for word in words
-        if word not in STOPWORDS
-        and word in CANONICAL_SKILLS
-    }
+
+    skills = set()
+
+    for word in words:
+        if word in STOPWORDS:
+            continue
+
+        normalized = normalize_skill(word)
+
+        if normalized in CANONICAL_SKILLS:
+            skills.add(normalized)
+
     return skills
+
 
 
 def match_skills(
@@ -150,6 +198,16 @@ def run_ats_keyword_match(
         matched,
         missing
     )
+
+        # ---- STEP 3 CLEANUP ----
+    matched = sorted(set(matched))
+    missing = sorted(set(missing))
+
+
+        # ---- STEP 4: Final formatting for UI ----
+    matched = [format_skill(skill) for skill in matched]
+    missing = [format_skill(skill) for skill in missing]
+
 
     return {
         "atsScore": ats_score,
