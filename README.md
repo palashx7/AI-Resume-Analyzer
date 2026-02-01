@@ -1,5 +1,8 @@
 # 🧠 AI Resume Analyzer & Job Match Platform
 
+🌐 Live App: https://ai-resume-analyzer-chi-ten.vercel.app/    
+🔌 Backend API Docs: https://ai-resume-analyzer-production-8fed.up.railway.app/docs  
+
 A **full-stack, production-ready AI application** that analyzes resumes against job descriptions using **ATS-style matching**, secure authentication, persistent analysis history, and a modern frontend dashboard.
 
 This project simulates how real-world Applicant Tracking Systems (ATS) evaluate resumes and provides actionable insights to candidates.
