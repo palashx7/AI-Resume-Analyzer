@@ -54,6 +54,7 @@ This project simulates how real-world Applicant Tracking Systems (ATS) evaluate 
 ## 🏗️ Architecture Overview
 
 ### High-Level Architecture
+
 ```mermaid
 flowchart TD
     FE[Frontend<br/>(React + TypeScript)]
@@ -66,6 +67,7 @@ flowchart TD
     API --> ATS
     ATS --> API
 ```
+
 
 
 ### Folder Structure
