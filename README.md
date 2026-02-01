@@ -57,10 +57,10 @@ This project simulates how real-world Applicant Tracking Systems (ATS) evaluate 
 
 ```mermaid
 flowchart TD
-    FE["Frontend\n(React + TypeScript)"]
-    API["REST API\n(FastAPI)"]
-    DB["MongoDB Atlas\n(Cloud Database)"]
-    ATS["ATS Analysis Engine\n(Keyword Matching)"]
+    FE["Frontend(React + TypeScript)"]
+    API["REST API(FastAPI)"]
+    DB["MongoDB Atlas(Cloud Database)"]
+    ATS["ATS Analysis Engine(Keyword Matching)"]
 
     FE --> API
     API --> DB
