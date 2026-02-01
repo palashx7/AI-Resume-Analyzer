@@ -3,12 +3,13 @@ import { getStoredAuthToken } from "../auth/auth.utils";
 import { forceLogout } from "../auth/auth.actions";
 
 const apiClient = axios.create({
-   baseURL: "http://127.0.0.1:8000",
-  timeout: 10000,
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  timeout: 60000,
   headers: {
     "Content-Type": "application/json",
   },
 });
+
 
 // Request interceptor (already present)
 apiClient.interceptors.request.use(
