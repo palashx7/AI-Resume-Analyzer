@@ -13,6 +13,9 @@ function AnalysisPage() {
   );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const [selectedAnalysisId, setSelectedAnalysisId] = useState<string | null>(null);
+
+
   type AnalysisTab = "run" | "history";
 
   const [activeTab, setActiveTab] = useState<AnalysisTab>("run");
@@ -21,6 +24,7 @@ function AnalysisPage() {
 
   const handleHistoryClick = async (analysisId: string) => {
     try {
+      setSelectedAnalysisId(analysisId); // ✅ NEW
       setIsRunning(true);
       setErrorMessage(null);
 
@@ -437,8 +441,11 @@ function AnalysisPage() {
       )}
 
       {activeTab === "history" && (
-        <AnalysisHistoryPage onSelectAnalysis={handleHistoryClick} />
-      )}
+  <AnalysisHistoryPage
+    onSelectAnalysis={handleHistoryClick}
+    selectedAnalysisId={selectedAnalysisId}
+  />
+)}
 
       {isLoadingAnalysis && <p>Loading analysis…</p>}
     </div>
