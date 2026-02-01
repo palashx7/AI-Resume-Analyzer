@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { uploadResume, getResumes, type Resume } from "../../api/resumes.api";
+import {useRef, useState } from "react";
+import { uploadResume} from "../../api/resumes.api";
 
 const MAX_FILE_SIZE_MB = 2;
 
@@ -13,9 +13,7 @@ function ResumesPage() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // 🆕 Resume list state (Step 8.5.2)
-  const [resumes, setResumes] = useState<Resume[]>([]);
-  const [isLoadingResumes, setIsLoadingResumes] = useState(false);
-  const [resumeFetchError, setResumeFetchError] = useState<string | null>(null);
+  
 
   const handleFileChange = (file: File | null) => {
     if (isUploading) return;

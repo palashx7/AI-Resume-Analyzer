@@ -10,12 +10,9 @@ import DashboardOverview from "./pages/dashboard/DashboardOverview";
 import ResumesPage from "./pages/resumes/ResumesPage";
 import JobDescriptionsPage from "./pages/jobDescriptions/JobDescriptionsPage";
 import AnalysisPage from "./pages/analysis/AnalysisPage";
-import AnalysisHistoryPage from "./pages/analysis/AnalysisHistoryPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 
-const handleSelectAnalysis = (analysisId: string) => {
-  console.log("Selected analysis:", analysisId);
-};
+
 
 function App() {
   const auth = useAuth();
@@ -59,9 +56,6 @@ function App() {
         <Route path="analysis" element={<AnalysisPage />} />
         <Route
           path="/dashboard/analysis/history"
-          element={
-            <AnalysisHistoryPage onSelectAnalysis={handleSelectAnalysis} />
-          }
         />
       </Route>
     </Routes>

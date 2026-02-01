@@ -31,7 +31,6 @@ function AnalysisPage() {
 
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [resumesLoading, setResumesLoading] = useState(false);
-  const [resumesError, setResumesError] = useState<string | null>(null);
   const [showJobDescriptionList, setShowJobDescriptionList] = useState(false);
 
   const [jobDescriptions, setJobDescriptions] = useState<JobDescription[]>([]);
@@ -48,12 +47,10 @@ const jdDropdownRef = useRef<HTMLDivElement | null>(null);
     async function fetchResumes() {
       try {
         setResumesLoading(true);
-        setResumesError(null);
 
         const data = await getResumes();
         setResumes(data);
       } catch (err) {
-        setResumesError("Failed to load resumes.");
       } finally {
         setResumesLoading(false);
       }
@@ -232,20 +229,7 @@ useEffect(() => {
     }
   };
 
-  const renderSkillGroup = (title: string, skills: string[]) => {
-    if (!skills || skills.length === 0) return null;
-
-    return (
-      <div style={{ marginTop: "0.5rem" }}>
-        <strong>{title}</strong>
-        <ul>
-          {skills.map((skill) => (
-            <li key={skill}>{skill}</li>
-          ))}
-        </ul>
-      </div>
-    );
-  };
+  
 
   const SkillChips = ({ skills }: { skills?: string[] }) => {
     if (!skills || skills.length === 0) {
