@@ -1,5 +1,9 @@
+// App.tsx
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useAuth } from "./auth/AuthContext";
+
 import LoginPage from "./pages/auth/LoginPage";
+import LandingPage from "./pages/LandingPage";
 import AuthGuard from "./routes/AuthGuard";
 import DashboardLayout from "./layouts/DashboardLayout";
 import DashboardOverview from "./pages/dashboard/DashboardOverview";
@@ -7,17 +11,40 @@ import ResumesPage from "./pages/resumes/ResumesPage";
 import JobDescriptionsPage from "./pages/jobDescriptions/JobDescriptionsPage";
 import AnalysisPage from "./pages/analysis/AnalysisPage";
 import AnalysisHistoryPage from "./pages/analysis/AnalysisHistoryPage";
+import RegisterPage from "./pages/auth/RegisterPage";
 
 const handleSelectAnalysis = (analysisId: string) => {
   console.log("Selected analysis:", analysisId);
-  // Step 3 will load analysis details here
 };
 
 function App() {
+  const auth = useAuth();
+
+  // ⏳ Wait for auth bootstrap (prevents flicker)
+  if (!auth.isInitialized) {
+    return <div>Initializing...</div>;
+  }
+
   return (
     <Routes>
+      {/* Public routes */}
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route
+        path="/"
+        element={
+          auth.isAuthenticated
+            ? <Navigate to="/dashboard" replace />
+            : <LandingPage />
+        }
+      />
+      <Route path="/" element={
+        auth.isAuthenticated
+          ? <Navigate to="/dashboard" replace />
+          : <LandingPage />
+      } />
 
+      {/* Protected routes */}
       <Route
         path="/dashboard"
         element={
@@ -37,8 +64,6 @@ function App() {
           }
         />
       </Route>
-
-      <Route path="/" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 }
