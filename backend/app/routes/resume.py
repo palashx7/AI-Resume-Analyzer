@@ -15,6 +15,7 @@ from app.services.pdf_service import (
     extract_text_from_pdf
 )
 from app.services.resume_service import create_resume
+from app.services.resume_service import list_user_resumes
 
 router = APIRouter(
     prefix="/resumes",
@@ -87,4 +88,21 @@ async def upload_resume(
             "extractedTextPreview": text_preview,
             "createdAt": "2026-01-01T00:00:00Z"
         }
+    }
+
+
+
+@router.get(
+    "",
+    status_code=status.HTTP_200_OK
+)
+async def get_user_resumes(
+    current_user=Depends(get_current_user)
+):
+    resumes = await list_user_resumes(
+        user_id=current_user["sub"]
+    )
+
+    return {
+        "resumes": resumes
     }

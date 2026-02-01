@@ -35,3 +35,19 @@ export async function createJobDescription(
 
   return response.data;
 }
+
+
+/**
+ * Fetch user's job descriptions (for dropdowns)
+ */
+export interface GetJobDescriptionsResponse {
+  jobDescriptions: JobDescription[];
+}
+
+export async function getJobDescriptions(): Promise<JobDescription[]> {
+  const response = await apiClient.get<GetJobDescriptionsResponse>(
+    "/job-descriptions"
+  );
+  return response.data.jobDescriptions;
+}
+

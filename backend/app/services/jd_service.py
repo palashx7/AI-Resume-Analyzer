@@ -31,3 +31,40 @@ async def create_job_description(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to save job description"
         )
+
+
+async def list_user_job_descriptions(user_id: str):
+    """
+    Returns lightweight list of job descriptions for dropdowns.
+    """
+    try:
+        cursor = (
+            db.job_descriptions
+            .find(
+                {"userId": ObjectId(user_id)},
+                {
+                    "_id": 1,
+                    "jdTitle": 1,
+                    "companyName": 1,
+                    "createdAt": 1,
+                }
+            )
+            .sort("createdAt", -1)
+        )
+
+        job_descriptions = []
+        async for doc in cursor:
+            job_descriptions.append({
+                "id": str(doc["_id"]),
+                "jdTitle": doc.get("jdTitle"),
+                "companyName": doc.get("companyName"),
+                "createdAt": doc.get("createdAt"),
+            })
+
+        return job_descriptions
+
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to fetch job descriptions"
+        )

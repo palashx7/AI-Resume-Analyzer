@@ -6,9 +6,11 @@ import apiClient from "./axios";
  */
 export interface Resume {
   id: string;
-  filename: string;
-  createdAt: string; // ISO UTC string
+  resumeTitle: string;
+  originalFileName: string;
+  createdAt: string;
 }
+
 
 /**
  * Upload resume (already exists in your file)
@@ -27,7 +29,12 @@ export async function uploadResume(file: File): Promise<void> {
 /**
  * Fetch user's uploaded resumes
  */
-export async function getResumes(): Promise<Resume[]> {
-  const response = await apiClient.get<Resume[]>("/resumes");
-  return response.data;
+export interface GetResumesResponse {
+  resumes: Resume[];
 }
+
+export async function getResumes(): Promise<Resume[]> {
+  const response = await apiClient.get<GetResumesResponse>("/resumes");
+  return response.data.resumes;
+}
+

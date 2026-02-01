@@ -31,3 +31,40 @@ async def create_resume(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to save resume"
         )
+
+
+async def list_user_resumes(user_id: str):
+    """
+    Returns lightweight list of resumes for dropdowns.
+    """
+    try:
+        cursor = (
+            db.resumes
+            .find(
+                {"userId": ObjectId(user_id)},
+                {
+                    "_id": 1,
+                    "resumeTitle": 1,
+                    "originalFileName": 1,
+                    "createdAt": 1,
+                }
+            )
+            .sort("createdAt", -1)
+        )
+
+        resumes = []
+        async for doc in cursor:
+            resumes.append({
+                "id": str(doc["_id"]),
+                "resumeTitle": doc.get("resumeTitle"),
+                "originalFileName": doc.get("originalFileName"),
+                "createdAt": doc.get("createdAt"),
+            })
+
+        return resumes
+
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to fetch resumes"
+        )

@@ -1,7 +1,12 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { runAnalysis, type AnalysisResult } from "../../api/analysis.api";
 import AnalysisHistoryPage from "./AnalysisHistoryPage";
 import { getAnalysisById } from "../../api/analysis.api";
+import { getResumes, type Resume } from "../../api/resumes.api";
+import {
+  getJobDescriptions,
+  type JobDescription,
+} from "../../api/jobDescription.api";
 
 function AnalysisPage() {
   const [resumeId, setResumeId] = useState("");
@@ -13,14 +18,129 @@ function AnalysisPage() {
   );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const [selectedAnalysisId, setSelectedAnalysisId] = useState<string | null>(null);
-
+  const [selectedAnalysisId, setSelectedAnalysisId] = useState<string | null>(
+    null,
+  );
 
   type AnalysisTab = "run" | "history";
 
   const [activeTab, setActiveTab] = useState<AnalysisTab>("run");
 
   const [isLoadingAnalysis] = useState(false);
+  const [showResumeList, setShowResumeList] = useState(false);
+
+  const [resumes, setResumes] = useState<Resume[]>([]);
+  const [resumesLoading, setResumesLoading] = useState(false);
+  const [resumesError, setResumesError] = useState<string | null>(null);
+  const [showJobDescriptionList, setShowJobDescriptionList] = useState(false);
+
+  const [jobDescriptions, setJobDescriptions] = useState<JobDescription[]>([]);
+  const [jobDescriptionsLoading, setJobDescriptionsLoading] = useState(false);
+  const [jobDescriptionsError, setJobDescriptionsError] = useState<
+    string | null
+  >(null);
+
+  const resumeDropdownRef = useRef<HTMLDivElement | null>(null);
+const jdDropdownRef = useRef<HTMLDivElement | null>(null);
+
+
+  useEffect(() => {
+    async function fetchResumes() {
+      try {
+        setResumesLoading(true);
+        setResumesError(null);
+
+        const data = await getResumes();
+        setResumes(data);
+      } catch (err) {
+        setResumesError("Failed to load resumes.");
+      } finally {
+        setResumesLoading(false);
+      }
+    }
+
+    fetchResumes();
+  }, []);
+
+  useEffect(() => {
+    async function fetchJobDescriptions() {
+      try {
+        setJobDescriptionsLoading(true);
+        setJobDescriptionsError(null);
+
+        const data = await getJobDescriptions();
+        setJobDescriptions(data);
+      } catch (err) {
+        setJobDescriptionsError("Failed to load job descriptions.");
+      } finally {
+        setJobDescriptionsLoading(false);
+      }
+    }
+
+    fetchJobDescriptions();
+  }, []);
+
+  useEffect(() => {
+  if (!showResumeList && !showJobDescriptionList) {
+    return;
+  }
+
+  function handleClickOutside(event: MouseEvent) {
+    const target = event.target as Node;
+
+    if (
+      showResumeList &&
+      resumeDropdownRef.current &&
+      !resumeDropdownRef.current.contains(target)
+    ) {
+      setShowResumeList(false);
+    }
+
+    if (
+      showJobDescriptionList &&
+      jdDropdownRef.current &&
+      !jdDropdownRef.current.contains(target)
+    ) {
+      setShowJobDescriptionList(false);
+    }
+  }
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, [
+  showResumeList,
+  showJobDescriptionList,
+  resumeDropdownRef,
+  jdDropdownRef,
+]);
+
+
+useEffect(() => {
+  if (!showResumeList && !showJobDescriptionList) {
+    return;
+  }
+
+  function handleKeyDown(event: KeyboardEvent) {
+    if (event.key === "Escape") {
+      if (showResumeList) {
+        setShowResumeList(false);
+      }
+      if (showJobDescriptionList) {
+        setShowJobDescriptionList(false);
+      }
+    }
+  }
+
+  document.addEventListener("keydown", handleKeyDown);
+
+  return () => {
+    document.removeEventListener("keydown", handleKeyDown);
+  };
+}, [showResumeList, showJobDescriptionList]);
+
 
   const handleHistoryClick = async (analysisId: string) => {
     try {
@@ -225,53 +345,189 @@ function AnalysisPage() {
               }}
             >
               {/* Resume ID */}
+              {/* Resume selection */}
               <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.25rem",
-                }}
-              >
-                <label>Resume ID</label>
-                <input
-                  type="text"
-                  value={resumeId}
-                  onChange={(e) => setResumeId(e.target.value)}
-                  disabled={isRunning}
-                  placeholder="Paste Resume ID here"
+  ref={resumeDropdownRef}
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    gap: "0.25rem",
+    position: "relative",
+  }}
+>
+
+                <label>Resume</label>
+
+                {/* Selected value */}
+                <div
+                  onClick={() => setShowResumeList((v) => !v)}
                   style={{
                     padding: "0.5rem",
                     borderRadius: "6px",
                     border: "1px solid #334155",
                     backgroundColor: "#020617",
                     color: "#e5e7eb",
+                    cursor: "pointer",
+                    userSelect: "none",
                   }}
-                />
+                >
+                  {resumeId
+                    ? (() => {
+                        const selected = resumes.find((r) => r.id === resumeId);
+                        return selected
+                          ? selected.resumeTitle || selected.originalFileName
+                          : "Select a resume";
+                      })()
+                    : resumesLoading
+                      ? "Loading resumes..."
+                      : resumes.length === 0
+                        ? "No resumes uploaded"
+                        : "Select a resume"}
+                </div>
+
+                {/* Dropdown list */}
+                {showResumeList && !resumesLoading && resumes.length > 0 && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "100%",
+                      left: 0,
+                      right: 0,
+                      backgroundColor: "#020617",
+                      border: "1px solid #334155",
+                      borderRadius: "6px",
+                      marginTop: "0.25rem",
+                      maxHeight: "200px",
+                      overflowY: "auto",
+                      zIndex: 20,
+                    }}
+                  >
+                    {resumes.map((resume) => (
+                      <div
+                        key={resume.id}
+                        onClick={() => {
+                          setResumeId(resume.id);
+                          setShowResumeList(false);
+                        }}
+                        style={{
+                          padding: "0.5rem",
+                          cursor: "pointer",
+                          backgroundColor:
+                            resume.id === resumeId ? "#1e293b" : "#020617",
+                          color: "#e5e7eb",
+                        }}
+                      >
+                        {resume.resumeTitle || resume.originalFileName}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
-              {/* Job Description ID */}
+              {/* Job Description selection */}
+
               <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.25rem",
-                }}
-              >
-                <label>Job Description ID</label>
-                <input
-                  type="text"
-                  value={jobDescriptionId}
-                  onChange={(e) => setJobDescriptionId(e.target.value)}
-                  disabled={isRunning}
-                  placeholder="Paste Job Description ID here"
+  ref={jdDropdownRef}
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    gap: "0.25rem",
+    position: "relative",
+  }}
+>
+
+                <label>Job Description</label>
+
+                {/* Selected value */}
+                <div
+                  onClick={() => {
+                    setShowJobDescriptionList((v) => !v);
+                  }}
                   style={{
                     padding: "0.5rem",
                     borderRadius: "6px",
                     border: "1px solid #334155",
                     backgroundColor: "#020617",
                     color: "#e5e7eb",
+                    cursor: "pointer",
+                    userSelect: "none",
                   }}
-                />
+                >
+                  {jobDescriptionId
+                    ? (() => {
+                        const selected = jobDescriptions.find(
+                          (j) => j.id === jobDescriptionId,
+                        );
+                        return selected
+                          ? `${selected.jdTitle} — ${selected.companyName}`
+                          : "Select a job description";
+                      })()
+                    : jobDescriptionsLoading
+                      ? "Loading job descriptions..."
+                      : jobDescriptions.length === 0
+                        ? "No job descriptions created"
+                        : "Select a job description"}
+                </div>
+
+                {/* Dropdown list */}
+                {showJobDescriptionList && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "100%",
+                      left: 0,
+                      right: 0,
+                      backgroundColor: "#020617",
+                      border: "1px solid #334155",
+                      borderRadius: "6px",
+                      marginTop: "0.25rem",
+                      maxHeight: "200px",
+                      overflowY: "auto",
+                      zIndex: 20,
+                    }}
+                  >
+                    {jobDescriptionsLoading && (
+                      <div style={{ padding: "0.5rem", color: "#94a3b8" }}>
+                        Loading job descriptions...
+                      </div>
+                    )}
+
+                    {!jobDescriptionsLoading &&
+                      jobDescriptions.length === 0 && (
+                        <div style={{ padding: "0.5rem", color: "#94a3b8" }}>
+                          No job descriptions created
+                        </div>
+                      )}
+
+                    {!jobDescriptionsLoading &&
+                      jobDescriptions.map((jd) => (
+                        <div
+                          key={jd.id}
+                          onClick={() => {
+                            setJobDescriptionId(jd.id);
+                            setShowJobDescriptionList(false);
+                          }}
+                          style={{
+                            padding: "0.5rem",
+                            cursor: "pointer",
+                            backgroundColor:
+                              jd.id === jobDescriptionId
+                                ? "#1e293b"
+                                : "#020617",
+                            color: "#e5e7eb",
+                          }}
+                        >
+                          {jd.jdTitle} — {jd.companyName}
+                        </div>
+                      ))}
+                  </div>
+                )}
+
+                {jobDescriptionsError && (
+                  <span style={{ color: "#f87171", fontSize: "0.85rem" }}>
+                    {jobDescriptionsError}
+                  </span>
+                )}
               </div>
 
               {/* Error message */}
@@ -399,8 +655,6 @@ function AnalysisPage() {
                     </div>
                   </div>
                 )}
-
-                
               </div>
 
               {/* Insights */}
@@ -441,11 +695,11 @@ function AnalysisPage() {
       )}
 
       {activeTab === "history" && (
-  <AnalysisHistoryPage
-    onSelectAnalysis={handleHistoryClick}
-    selectedAnalysisId={selectedAnalysisId}
-  />
-)}
+        <AnalysisHistoryPage
+          onSelectAnalysis={handleHistoryClick}
+          selectedAnalysisId={selectedAnalysisId}
+        />
+      )}
 
       {isLoadingAnalysis && <p>Loading analysis…</p>}
     </div>

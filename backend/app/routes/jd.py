@@ -5,6 +5,7 @@ from app.schemas.jd import (
     JobDescriptionSuccessResponse
 )
 from app.services.jd_service import create_job_description
+from app.services.jd_service import list_user_job_descriptions
 
 router = APIRouter(
     prefix="/job-descriptions",
@@ -55,4 +56,21 @@ async def create_job_description_route(
             "companyName": payload.companyName,
             "createdAt": "2026-01-01T00:00:00Z"
         }
+    }
+
+
+
+@router.get(
+    "",
+    status_code=status.HTTP_200_OK
+)
+async def get_user_job_descriptions(
+    current_user=Depends(get_current_user)
+):
+    job_descriptions = await list_user_job_descriptions(
+        user_id=current_user["sub"]
+    )
+
+    return {
+        "jobDescriptions": job_descriptions
     }
