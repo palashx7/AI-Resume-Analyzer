@@ -302,8 +302,7 @@ npm run dev
 
 ## 👨‍💻 Author
 
-**Palash Bhivgade**
-
+**Palash Bhivgade**  
 Final-year Electronics & Telecommunication Engineering student   
 Focused on Backend Engineering, System Design, and Applied AI
 
