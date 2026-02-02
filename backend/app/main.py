@@ -21,7 +21,9 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173",
         "http://127.0.0.1:5173",
-        "https://ai-resume-analyzer-fq54wunu5-palashs-projects-6c6a75b6.vercel.app"
+        "https://ai-resume-analyzer-fq54wunu5-palashs-projects-6c6a75b6.vercel.app",
+        "https://ai-resume-analyzer-chi-ten.vercel.app/",
+        "https://ai-resume-analyzer-chi-ten.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
