@@ -12,7 +12,9 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async () => {
+  const handleLogin = async () => {
+    if (loading) return;
+
     setError(null);
     setLoading(true);
 
@@ -37,88 +39,72 @@ function LoginPage() {
         backgroundColor: "#020617",
       }}
     >
-      {/* Login Card */}
       <div
         style={{
           width: "360px",
           backgroundColor: "#0f172a",
           padding: "2rem",
           borderRadius: "12px",
-          boxShadow: "0 20px 40px rgba(0, 0, 0, 0.5)",
+          boxShadow: "0 20px 40px rgba(0,0,0,0.5)",
         }}
       >
-        <h2 style={{ marginBottom: "1.5rem", textAlign: "center" }}>Login</h2>
+        <h2 style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+          Login
+        </h2>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            handleSubmit();
-          }}
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "1rem",
-          }}
-        >
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}
-          >
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <div>
             <label>Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
               disabled={loading}
-              style={{
-                padding: "0.5rem",
-                borderRadius: "6px",
-                border: "1px solid #334155",
-                backgroundColor: "#020617",
-                color: "#e5e7eb",
-              }}
+              required
+              style={inputStyle}
             />
           </div>
 
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}
-          >
+          <div>
             <label>Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
               disabled={loading}
-              style={{
-                padding: "0.5rem",
-                borderRadius: "6px",
-                border: "1px solid #334155",
-                backgroundColor: "#020617",
-                color: "#e5e7eb",
-              }}
+              required
+              style={inputStyle}
             />
           </div>
 
           {error && (
-            <p style={{ color: "#f87171", fontSize: "0.9rem" }}>{error}</p>
+            <p style={{ color: "#f87171", fontSize: "0.9rem" }}>
+              {error}
+            </p>
           )}
 
           <button
-            type="submit"
+            type="button"
+            onClick={handleLogin}
             disabled={loading}
-            style={{
-              marginTop: "1rem",
-              width: "100%",
-            }}
+            style={{ marginTop: "1rem" }}
           >
             {loading ? "Logging in..." : "Login"}
           </button>
-        </form>
+        </div>
       </div>
     </div>
   );
 }
+
+const inputStyle = {
+  width: "100%",
+  padding: "0.5rem",
+  marginTop: "0.25rem",
+  borderRadius: "6px",
+  border: "1px solid #334155",
+  backgroundColor: "#020617",
+  color: "#e5e7eb",
+};
 
 export default LoginPage;

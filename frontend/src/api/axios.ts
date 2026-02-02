@@ -29,7 +29,14 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const status = error.response?.status;
+    const url = error.config?.url || "";
+
+    // 🚫 Do NOT auto-logout on auth endpoints
+    const isAuthEndpoint =
+      url.includes("/auth/login") || url.includes("/auth/register");
+
+    if (status === 401 && !isAuthEndpoint) {
       forceLogout();
     }
 
