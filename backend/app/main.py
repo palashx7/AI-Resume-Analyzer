@@ -3,10 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
 
-from app.routes import auth
-from app.routes.resume import router as resume_router
-from app.routes.jd import router as jd_router
-from app.routes.analysis import router as analysis_router
+from routes import auth
+from routes.resume import router as resume_router
+from routes.jd import router as jd_router
+from routes.analysis import router as analysis_router
+
 
 load_dotenv()
 
